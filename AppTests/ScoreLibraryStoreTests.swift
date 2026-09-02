@@ -88,6 +88,34 @@ final class ScoreLibraryStoreTests: XCTestCase {
         XCTAssertEqual(store.lastPage(of: store.scores[0]), 0)
     }
 
+    // MARK: 기본 샘플 설치
+
+    func testInstallSamplesCopiesWithGivenTitle() throws {
+        let store = makeStore()
+        let sample = try makePDF(named: "debussy-clair-de-lune")
+        store.installSamplesIfNeeded([BundledSample(url: sample, title: "드뷔시 - 달빛")])
+        XCTAssertEqual(store.scores.map(\.title), ["드뷔시 - 달빛"])
+    }
+
+    func testInstallSamplesRunsOnlyOnce() throws {
+        let store = makeStore()
+        let sample = try makePDF(named: "debussy-clair-de-lune")
+        let samples = [BundledSample(url: sample, title: "드뷔시 - 달빛")]
+        store.installSamplesIfNeeded(samples)
+        store.delete(store.scores[0])            // 사용자가 지운 뒤
+        store.installSamplesIfNeeded(samples)    // 다시 설치되면 안 됨
+        XCTAssertTrue(store.scores.isEmpty)
+    }
+
+    func testInstallSamplesSurvivesAcrossStoreInstances() throws {
+        let sample = try makePDF(named: "debussy-clair-de-lune")
+        let samples = [BundledSample(url: sample, title: "드뷔시 - 달빛")]
+        makeStore().installSamplesIfNeeded(samples)
+        let second = makeStore()                 // 앱 재실행에 해당
+        second.installSamplesIfNeeded(samples)
+        XCTAssertEqual(second.scores.count, 1)
+    }
+
     func testThumbnailReturnsImage() throws {
         let store = makeStore()
         try store.importPDF(from: try makePDF(named: "썸네일"))

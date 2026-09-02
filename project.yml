@@ -11,7 +11,11 @@ targets:
   ScoreForYou:
     type: application
     platform: iOS
-    sources: [App]
+    sources:
+      - App
+      - path: Samples
+        buildPhase: resources
+        excludes: ["LICENSE.md"]
     dependencies:
       - package: GestureCore
     info:

@@ -10,6 +10,9 @@ struct ScoreApp: App {
             LibraryView()
                 .environmentObject(library)
                 .environmentObject(settings)
+                .onAppear {
+                    library.installSamplesIfNeeded(BundledSample.bundled)
+                }
         }
     }
 }

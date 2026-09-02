@@ -9,6 +9,19 @@ struct Score: Identifiable, Hashable {
     var title: String { (id as NSString).deletingPathExtension }
 }
 
+/// 앱에 내장된 기본 샘플 악보. 출처와 라이선스는 Samples/LICENSE.md 참고.
+struct BundledSample {
+    let url: URL
+    let title: String
+
+    static var bundled: [BundledSample] {
+        guard let url = Bundle.main.url(forResource: "debussy-clair-de-lune", withExtension: "pdf") else {
+            return []
+        }
+        return [BundledSample(url: url, title: "드뷔시 - 달빛 (Clair de Lune)")]
+    }
+}
+
 @MainActor
 final class ScoreLibraryStore: ObservableObject {
     enum LibraryError: LocalizedError {
@@ -55,6 +68,18 @@ final class ScoreLibraryStore: ObservableObject {
         reload()
     }
 
+    /// 최초 1회만 샘플을 보관함에 복사한다. 사용자가 지운 샘플은 다시 설치하지 않는다.
+    func installSamplesIfNeeded(_ samples: [BundledSample]) {
+        guard !defaults.bool(forKey: Self.samplesInstalledKey) else { return }
+        for sample in samples {
+            let dest = directory.appendingPathComponent("\(sample.title).pdf")
+            guard !FileManager.default.fileExists(atPath: dest.path) else { continue }
+            try? FileManager.default.copyItem(at: sample.url, to: dest)
+        }
+        defaults.set(true, forKey: Self.samplesInstalledKey)
+        reload()
+    }
+
     func delete(_ score: Score) {
         try? FileManager.default.removeItem(at: score.url)
         defaults.removeObject(forKey: lastPageKey(score.id))
@@ -86,6 +111,8 @@ final class ScoreLibraryStore: ObservableObject {
     func thumbnail(for score: Score, size: CGSize) -> UIImage? {
         PDFDocument(url: score.url)?.page(at: 0)?.thumbnail(of: size, for: .mediaBox)
     }
+
+    private static let samplesInstalledKey = "didInstallSamples"
 
     private func lastPageKey(_ id: String) -> String { "lastPage.\(id)" }
 }
