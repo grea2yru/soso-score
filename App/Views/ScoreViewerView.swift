@@ -9,18 +9,27 @@ struct ScoreViewerView: View {
     @StateObject private var tracker = FaceTrackingSession()
     @Environment(\.scenePhase) private var scenePhase
     @State private var document: PDFDocument?
+    /// 현재 펼침의 첫(왼쪽) 페이지 인덕스
     @State private var currentPageIndex = 0
     @State private var flashEdge: Edge?
     @State private var isTwoUp = false
+
+    private var navigator: PageNavigator {
+        PageNavigator(pageCount: document?.pageCount ?? 0, twoUp: isTwoUp)
+    }
 
     var body: some View {
         GeometryReader { geo in
             ZStack {
                 if let document {
-                    PDFKitView(document: document, currentPageIndex: $currentPageIndex, twoUp: isTwoUp)
-                        .ignoresSafeArea(edges: .bottom)
+                    SpreadView(
+                        document: document,
+                        indices: navigator.visibleIndices(from: currentPageIndex),
+                        twoUp: isTwoUp
+                    )
+                    .padding(.horizontal, 8)
 
-                    // 좌/우 30% 탭 영역 (중앙 40%는 PDFView 제스처에 양보)
+                    // 좌/우 30% 탭 영역
                     HStack(spacing: 0) {
                         Color.clear
                             .contentShape(Rectangle())
@@ -56,6 +65,7 @@ struct ScoreViewerView: View {
                 isTwoUp = size.width > size.height
             }
         }
+        .background(Color(.systemBackground))
         .navigationTitle(score.title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -84,6 +94,10 @@ struct ScoreViewerView: View {
             tracker.pause()
             library.setLastPage(currentPageIndex, of: score)
         }
+        .onChange(of: isTwoUp) { _, _ in
+            // 회전 시 펼침 경계(짝수 인덕스)에 맞춰 스냅
+            currentPageIndex = navigator.leadingIndex(from: currentPageIndex)
+        }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { tracker.start() } else { tracker.pause() }
         }
@@ -97,16 +111,20 @@ struct ScoreViewerView: View {
 
     private var pageLabel: String {
         let total = document?.pageCount ?? 0
-        return "\(currentPageIndex + 1) / \(total)"
+        let visible = navigator.visibleIndices(from: currentPageIndex).map { $0 + 1 }
+        guard let first = visible.first else { return "0 / \(total)" }
+        if let last = visible.last, last != first {
+            return "\(first)–\(last) / \(total)"
+        }
+        return "\(first) / \(total)"
     }
 
     func turn(_ event: PageTurnEvent) {
-        guard let document else { return }
-        let step = isTwoUp ? 2 : 1
+        guard document != nil else { return }
         let target: Int
         switch event {
-        case .next: target = min(currentPageIndex + step, document.pageCount - 1)
-        case .previous: target = max(currentPageIndex - step, 0)
+        case .next: target = navigator.next(from: currentPageIndex)
+        case .previous: target = navigator.previous(from: currentPageIndex)
         }
         guard target != currentPageIndex else { return }
         currentPageIndex = target
