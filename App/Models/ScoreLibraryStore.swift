@@ -33,6 +33,9 @@ final class ScoreLibraryStore: ObservableObject {
     /// 즐겨찾기된 악보의 id(파일명) 집합
     @Published private(set) var favoriteIDs: Set<String> = []
 
+    /// 악보별 필기 저장소 (Documents/Annotations)
+    let annotations: AnnotationStore
+
     private let directory: URL
     private let defaults: UserDefaults
 
@@ -40,6 +43,7 @@ final class ScoreLibraryStore: ObservableObject {
         self.directory = directory
             ?? FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         self.defaults = defaults
+        self.annotations = AnnotationStore(directory: self.directory.appendingPathComponent("Annotations", isDirectory: true))
         favoriteIDs = Set(defaults.stringArray(forKey: Self.favoritesKey) ?? [])
         reload()
     }
@@ -116,6 +120,7 @@ final class ScoreLibraryStore: ObservableObject {
         try? FileManager.default.removeItem(at: score.url)
         defaults.removeObject(forKey: lastPageKey(score.id))
         if favoriteIDs.remove(score.id) != nil { saveFavorites() }
+        annotations.delete(for: score.id)
         reload()
     }
 
@@ -134,6 +139,7 @@ final class ScoreLibraryStore: ObservableObject {
             favoriteIDs.insert(dest.lastPathComponent)
             saveFavorites()
         }
+        annotations.move(from: score.id, to: dest.lastPathComponent)
         reload()
     }
 

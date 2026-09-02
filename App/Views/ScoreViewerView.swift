@@ -1,5 +1,6 @@
 import SwiftUI
 import PDFKit
+import PencilKit
 import GestureCore
 
 struct ScoreViewerView: View {
@@ -13,6 +14,18 @@ struct ScoreViewerView: View {
     @State private var currentPageIndex = 0
     @State private var flashEdge: Edge?
     @State private var isTwoUp = false
+    /// 필기 모드. 켜면 탭 넘김이 꺼지고 펜슬 캔버스가 입력을 받는다 (얼굴 제스처는 계속 동작)
+    @State private var isAnnotating = false
+    /// 페이지 인덱스별 필기 (페이지 포인트 좌표계)
+    @State private var drawings: [Int: PKDrawing] = [:]
+    /// 악보 메모에 필요한 도구만: 펜·마커·연필·지우개·올가미 (자·스크리블 제외)
+    @State private var toolPicker = PKToolPicker(toolItems: [
+        PKToolPickerInkingItem(type: .pen),
+        PKToolPickerInkingItem(type: .marker),
+        PKToolPickerInkingItem(type: .pencil),
+        PKToolPickerEraserItem(type: .vector),
+        PKToolPickerLassoItem(),
+    ])
 
     private var navigator: PageNavigator {
         PageNavigator(pageCount: document?.pageCount ?? 0, twoUp: isTwoUp)
@@ -26,19 +39,29 @@ struct ScoreViewerView: View {
                         document: document,
                         indices: navigator.visibleIndices(from: currentPageIndex),
                         twoUp: isTwoUp
-                    )
+                    ) { pageIndex, scale in
+                        PencilCanvasView(
+                            drawing: drawingBinding(for: pageIndex),
+                            scale: scale,
+                            isActive: isAnnotating,
+                            toolPicker: toolPicker
+                        )
+                        .id(pageIndex)
+                    }
                     .padding(.horizontal, 8)
 
-                    // 좌/우 30% 탭 영역
-                    HStack(spacing: 0) {
-                        Color.clear
-                            .contentShape(Rectangle())
-                            .onTapGesture { turn(.previous) }
-                        Color.clear
-                            .frame(width: geo.size.width * 0.4)
-                        Color.clear
-                            .contentShape(Rectangle())
-                            .onTapGesture { turn(.next) }
+                    // 좌/우 30% 탭 영역 (필기 모드에서는 펜슬 입력을 방해하지 않도록 끔)
+                    if !isAnnotating {
+                        HStack(spacing: 0) {
+                            Color.clear
+                                .contentShape(Rectangle())
+                                .onTapGesture { turn(.previous) }
+                            Color.clear
+                                .frame(width: geo.size.width * 0.4)
+                            Color.clear
+                                .contentShape(Rectangle())
+                                .onTapGesture { turn(.next) }
+                        }
                     }
                 } else {
                     ContentUnavailableView("PDF를 열 수 없습니다", systemImage: "exclamationmark.triangle")
@@ -70,6 +93,13 @@ struct ScoreViewerView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
+                Toggle(isOn: $isAnnotating) {
+                    Image(systemName: isAnnotating ? "pencil.tip.crop.circle.fill" : "pencil.tip.crop.circle")
+                }
+                .toggleStyle(.button)
+                .accessibilityLabel("필기 모드")
+            }
+            ToolbarItem(placement: .topBarTrailing) {
                 HStack(spacing: 12) {
                     // 얼굴 추적 상태: 초록 = 추적 중, 회색 = 미검출/꺼짐
                     Circle()
@@ -87,12 +117,14 @@ struct ScoreViewerView: View {
             document = doc
             let pageCount = doc?.pageCount ?? 1
             currentPageIndex = min(library.lastPage(of: score), max(pageCount - 1, 0))
+            drawings = library.annotations.load(for: score.id)
             tracker.updateSettings(settings.gesture)
             tracker.start()
         }
         .onDisappear {
             tracker.pause()
             library.setLastPage(currentPageIndex, of: score)
+            saveDrawings()
         }
         .onChange(of: isTwoUp) { _, _ in
             // 회전 시 펼침 경계(짝수 인덕스)에 맞춰 스냅
@@ -107,6 +139,20 @@ struct ScoreViewerView: View {
         .onReceive(tracker.events) { event in
             turn(event)
         }
+    }
+
+    private func drawingBinding(for pageIndex: Int) -> Binding<PKDrawing> {
+        Binding(
+            get: { drawings[pageIndex] ?? PKDrawing() },
+            set: { newValue in
+                drawings[pageIndex] = newValue
+                saveDrawings()
+            }
+        )
+    }
+
+    private func saveDrawings() {
+        try? library.annotations.save(drawings, for: score.id)
     }
 
     private var pageLabel: String {

@@ -1,5 +1,6 @@
 import XCTest
 import UIKit
+import PencilKit
 @testable import ScoreForYou
 
 @MainActor
@@ -145,6 +146,24 @@ final class ScoreLibraryStoreTests: XCTestCase {
         store.toggleFavorite(store.scores[0])
         store.delete(store.scores[0])
         XCTAssertTrue(store.favoriteIDs.isEmpty)
+    }
+
+    // MARK: 필기 연동
+
+    func testRenameAndDeleteCarryAnnotations() throws {
+        let store = makeStore()
+        try store.importPDF(from: try makePDF(named: "옛이름"))
+        let ink = PKInk(.pen, color: .black)
+        let point = PKStrokePoint(location: .zero, timeOffset: 0, size: CGSize(width: 3, height: 3),
+                                  opacity: 1, force: 1, azimuth: 0, altitude: .pi / 2)
+        let stroke = PKStroke(ink: ink, path: PKStrokePath(controlPoints: [point, point], creationDate: Date()))
+        try store.annotations.save([0: PKDrawing(strokes: [stroke])], for: store.scores[0].id)
+
+        store.rename(store.scores[0], to: "새이름")
+        XCTAssertEqual(store.annotations.load(for: "새이름.pdf").count, 1)
+
+        store.delete(store.scores[0])
+        XCTAssertTrue(store.annotations.load(for: "새이름.pdf").isEmpty)
     }
 
     // MARK: 검색·필터
