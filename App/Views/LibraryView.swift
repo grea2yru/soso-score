@@ -42,14 +42,12 @@ struct LibraryView: View {
             }
             .navigationTitle("악보 보관함")
             .navigationDestination(for: Score.self) { score in
-                // Task 8에서 ScoreViewerView(score: score)로 교체
-                Text(score.title)
+                ScoreViewerView(score: score)
             }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     NavigationLink {
-                        // Task 9에서 SettingsView()로 교체
-                        Text("설정")
+                        SettingsView()
                     } label: {
                         Image(systemName: "gearshape")
                     }
