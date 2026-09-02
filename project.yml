@@ -1,0 +1,54 @@
+name: ScoreForYou
+options:
+  bundleIdPrefix: com.yru
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+packages:
+  GestureCore:
+    path: Packages/GestureCore
+targets:
+  ScoreForYou:
+    type: application
+    platform: iOS
+    sources: [App]
+    dependencies:
+      - package: GestureCore
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: 악보뷰어
+        NSCameraUsageDescription: 얼굴 제스처(고개 돌리기·윙크)로 악보 페이지를 넘기기 위해 전면 카메라를 사용합니다.
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        CFBundleDocumentTypes:
+          - CFBundleTypeName: PDF Document
+            LSHandlerRank: Alternate
+            LSItemContentTypes: [com.adobe.pdf]
+    settings:
+      base:
+        TARGETED_DEVICE_FAMILY: "2"
+        SWIFT_VERSION: "5.9"
+        # 실기기 배포 시 Xcode에서 팀을 지정하거나 아래 주석을 해제해 팀 ID를 기입
+        # DEVELOPMENT_TEAM: XXXXXXXXXX
+  ScoreForYouTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [AppTests]
+    dependencies:
+      - target: ScoreForYou
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  ScoreForYou:
+    build:
+      targets:
+        ScoreForYou: all
+        ScoreForYouTests: [test]
+    test:
+      targets: [ScoreForYouTests]
