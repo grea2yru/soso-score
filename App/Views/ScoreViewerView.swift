@@ -5,6 +5,9 @@ import GestureCore
 struct ScoreViewerView: View {
     let score: Score
     @EnvironmentObject var library: ScoreLibraryStore
+    @EnvironmentObject var settings: AppSettings
+    @StateObject private var tracker = FaceTrackingSession()
+    @Environment(\.scenePhase) private var scenePhase
     @State private var document: PDFDocument?
     @State private var currentPageIndex = 0
     @State private var flashEdge: Edge?
@@ -32,6 +35,18 @@ struct ScoreViewerView: View {
                     ContentUnavailableView("PDF를 열 수 없습니다", systemImage: "exclamationmark.triangle")
                 }
 
+                if tracker.didFail {
+                    VStack {
+                        Text("카메라를 사용할 수 없어 손·탭으로만 넘길 수 있습니다. 설정 앱 > 개인정보 보호 > 카메라에서 권한을 확인하세요.")
+                            .font(.footnote)
+                            .padding(10)
+                            .background(.yellow.opacity(0.9), in: RoundedRectangle(cornerRadius: 8))
+                            .padding(.top, 4)
+                        Spacer()
+                    }
+                    .allowsHitTesting(false)
+                }
+
                 if let edge = flashEdge {
                     FlashOverlay(edge: edge)
                 }
@@ -45,9 +60,16 @@ struct ScoreViewerView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Text(pageLabel)
-                    .font(.callout.monospacedDigit())
-                    .foregroundStyle(.secondary)
+                HStack(spacing: 12) {
+                    // 얼굴 추적 상태: 초록 = 추적 중, 회색 = 미검출/꺼짐
+                    Circle()
+                        .fill(tracker.isTrackingFace ? Color.green : Color.gray.opacity(0.5))
+                        .frame(width: 10, height: 10)
+                        .accessibilityLabel(tracker.isTrackingFace ? "얼굴 추적 중" : "얼굴 미검출")
+                    Text(pageLabel)
+                        .font(.callout.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                }
             }
         }
         .onAppear {
@@ -55,9 +77,21 @@ struct ScoreViewerView: View {
             document = doc
             let pageCount = doc?.pageCount ?? 1
             currentPageIndex = min(library.lastPage(of: score), max(pageCount - 1, 0))
+            tracker.updateSettings(settings.gesture)
+            tracker.start()
         }
         .onDisappear {
+            tracker.pause()
             library.setLastPage(currentPageIndex, of: score)
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { tracker.start() } else { tracker.pause() }
+        }
+        .onChange(of: settings.gesture) { _, newValue in
+            tracker.updateSettings(newValue)
+        }
+        .onReceive(tracker.events) { event in
+            turn(event)
         }
     }
 

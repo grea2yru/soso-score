@@ -37,8 +37,39 @@ struct SettingsView: View {
                     settings.gesture = .default
                 }
             }
+
+            Section("실시간 값 (보정용)") {
+                if FaceTrackingSession.isSupported {
+                    FaceDebugView()
+                } else {
+                    Text("이 기기에서는 얼굴 추적을 사용할 수 없습니다. (시뮬레이터 포함)")
+                        .foregroundStyle(.secondary)
+                }
+            }
         }
         .navigationTitle("설정")
+    }
+}
+
+/// 실기기에서 임계값을 보정할 수 있도록 현재 얼굴 값을 그대로 보여준다.
+/// 설정 화면은 뷰어와 동시에 열리지 않으므로 자체 AR 세션을 사용해도 충돌하지 않는다.
+struct FaceDebugView: View {
+    @StateObject private var tracker = FaceTrackingSession()
+
+    var body: some View {
+        Group {
+            if let frame = tracker.latestFrame, tracker.isTrackingFace {
+                LabeledContent("고개 각도(yaw)", value: String(format: "%+.1f° (오른쪽이 +)", frame.yawDegrees))
+                LabeledContent("왼눈 감김", value: String(format: "%.2f", frame.leftEyeBlink))
+                LabeledContent("오른눈 감김", value: String(format: "%.2f", frame.rightEyeBlink))
+            } else {
+                Text("얼굴이 감지되지 않았습니다. 화면 앞에 얼굴을 비춰주세요.")
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .monospacedDigit()
+        .onAppear { tracker.start() }
+        .onDisappear { tracker.pause() }
     }
 }
 
