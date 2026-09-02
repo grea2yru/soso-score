@@ -30,6 +30,8 @@ final class ScoreLibraryStore: ObservableObject {
     }
 
     @Published private(set) var scores: [Score] = []
+    /// 즐겨찾기된 악보의 id(파일명) 집합
+    @Published private(set) var favoriteIDs: Set<String> = []
 
     private let directory: URL
     private let defaults: UserDefaults
@@ -38,7 +40,37 @@ final class ScoreLibraryStore: ObservableObject {
         self.directory = directory
             ?? FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         self.defaults = defaults
+        favoriteIDs = Set(defaults.stringArray(forKey: Self.favoritesKey) ?? [])
         reload()
+    }
+
+    // MARK: 즐겨찾기·검색
+
+    func isFavorite(_ score: Score) -> Bool {
+        favoriteIDs.contains(score.id)
+    }
+
+    func toggleFavorite(_ score: Score) {
+        if favoriteIDs.contains(score.id) {
+            favoriteIDs.remove(score.id)
+        } else {
+            favoriteIDs.insert(score.id)
+        }
+        saveFavorites()
+    }
+
+    /// 제목 부분 일치(대소문자 무시)로 걸러 즐겨찾기를 앞에 둔 목록
+    func filteredScores(query: String, favoritesOnly: Bool) -> [Score] {
+        let trimmed = query.trimmingCharacters(in: .whitespaces)
+        let matched = scores.filter { score in
+            (!favoritesOnly || isFavorite(score))
+                && (trimmed.isEmpty || score.title.localizedStandardContains(trimmed))
+        }
+        return matched.filter(isFavorite) + matched.filter { !isFavorite($0) }
+    }
+
+    private func saveFavorites() {
+        defaults.set(Array(favoriteIDs).sorted(), forKey: Self.favoritesKey)
     }
 
     func reload() {
@@ -83,6 +115,7 @@ final class ScoreLibraryStore: ObservableObject {
     func delete(_ score: Score) {
         try? FileManager.default.removeItem(at: score.url)
         defaults.removeObject(forKey: lastPageKey(score.id))
+        if favoriteIDs.remove(score.id) != nil { saveFavorites() }
         reload()
     }
 
@@ -97,6 +130,10 @@ final class ScoreLibraryStore: ObservableObject {
         let saved = defaults.integer(forKey: lastPageKey(score.id))
         defaults.removeObject(forKey: lastPageKey(score.id))
         if saved != 0 { defaults.set(saved, forKey: lastPageKey(dest.lastPathComponent)) }
+        if favoriteIDs.remove(score.id) != nil {
+            favoriteIDs.insert(dest.lastPathComponent)
+            saveFavorites()
+        }
         reload()
     }
 
@@ -113,6 +150,7 @@ final class ScoreLibraryStore: ObservableObject {
     }
 
     private static let samplesInstalledKey = "didInstallSamples"
+    private static let favoritesKey = "favoriteScoreIDs"
 
     private func lastPageKey(_ id: String) -> String { "lastPage.\(id)" }
 }

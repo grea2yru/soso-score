@@ -116,6 +116,60 @@ final class ScoreLibraryStoreTests: XCTestCase {
         XCTAssertEqual(second.scores.count, 1)
     }
 
+    // MARK: 즐겨찾기
+
+    func testToggleFavoritePersistsAcrossInstances() throws {
+        let store = makeStore()
+        try store.importPDF(from: try makePDF(named: "녹턴"))
+        store.toggleFavorite(store.scores[0])
+        XCTAssertTrue(store.isFavorite(store.scores[0]))
+
+        let second = makeStore()
+        XCTAssertTrue(second.isFavorite(second.scores[0]))
+        second.toggleFavorite(second.scores[0])
+        XCTAssertFalse(second.isFavorite(second.scores[0]))
+    }
+
+    func testRenameKeepsFavorite() throws {
+        let store = makeStore()
+        try store.importPDF(from: try makePDF(named: "옛이름"))
+        store.toggleFavorite(store.scores[0])
+        store.rename(store.scores[0], to: "새이름")
+        XCTAssertTrue(store.isFavorite(store.scores[0]))
+        XCTAssertEqual(store.scores[0].title, "새이름")
+    }
+
+    func testDeleteClearsFavorite() throws {
+        let store = makeStore()
+        try store.importPDF(from: try makePDF(named: "지울곡"))
+        store.toggleFavorite(store.scores[0])
+        store.delete(store.scores[0])
+        XCTAssertTrue(store.favoriteIDs.isEmpty)
+    }
+
+    // MARK: 검색·필터
+
+    func testFilterByTitleIsCaseInsensitivePartialMatch() throws {
+        let store = makeStore()
+        try store.importPDF(from: try makePDF(named: "Clair de Lune"))
+        try store.importPDF(from: try makePDF(named: "월광 소나타"))
+        try store.importPDF(from: try makePDF(named: "녹턴"))
+        XCTAssertEqual(store.filteredScores(query: "lune", favoritesOnly: false).map(\.title), ["Clair de Lune"])
+        XCTAssertEqual(store.filteredScores(query: "소나타", favoritesOnly: false).map(\.title), ["월광 소나타"])
+        XCTAssertEqual(store.filteredScores(query: "  ", favoritesOnly: false).count, 3)
+    }
+
+    func testFavoritesOnlyFilterAndFavoritesSortFirst() throws {
+        let store = makeStore()
+        try store.importPDF(from: try makePDF(named: "가"))
+        try store.importPDF(from: try makePDF(named: "나"))
+        try store.importPDF(from: try makePDF(named: "다"))
+        let na = store.scores.first { $0.title == "나" }!
+        store.toggleFavorite(na)
+        XCTAssertEqual(store.filteredScores(query: "", favoritesOnly: true).map(\.title), ["나"])
+        XCTAssertEqual(store.filteredScores(query: "", favoritesOnly: false).map(\.title), ["나", "가", "다"])
+    }
+
     func testThumbnailReturnsImage() throws {
         let store = makeStore()
         try store.importPDF(from: try makePDF(named: "썸네일"))
