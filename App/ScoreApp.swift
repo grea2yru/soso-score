@@ -2,9 +2,14 @@ import SwiftUI
 
 @main
 struct ScoreApp: App {
+    @StateObject private var library = ScoreLibraryStore()
+    @StateObject private var settings = AppSettings()
+
     var body: some Scene {
         WindowGroup {
-            Text("악보뷰어")
+            LibraryView()
+                .environmentObject(library)
+                .environmentObject(settings)
         }
     }
 }
