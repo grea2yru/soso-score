@@ -4,21 +4,24 @@ import GestureCore
 
 /// 페이지 소스와 무관한 뷰어 공통부: 펼침 배치, 탭/얼굴 제스처 넘김, 플래시, 페이지 표시,
 /// 필기 모드(PencilKit) + 저장, 마지막 페이지 기억.
-struct ScoreViewerShell<Content: View>: View {
+struct ScoreViewerShell<Content: View, Accessory: View>: View {
     let score: Score
     @ObservedObject var library: ScoreLibraryStore
     let pageCount: Int
+    /// 현재 펼침 위치 (부모가 소유; 따라가기 등 외부 로직이 함께 조작)
+    @ObservedObject var cursor: PageCursor
     /// 페이지의 정규화 좌표계 크기 (필기 좌표 기준)
     let pageSize: (Int) -> CGSize
+    /// true면 좌/우 탭 넘김을 끈다 (따라가기 중 탭은 위치 재지정에 쓰임)
+    var disablesTapTurning: Bool = false
     @ViewBuilder let content: (Int) -> Content
+    /// 툴바 오른쪽에 추가되는 부속 뷰 (예: 따라가기 컨트롤)
+    @ViewBuilder let accessory: () -> Accessory
 
     @EnvironmentObject var settings: AppSettings
     @StateObject private var tracker = FaceTrackingSession()
     @Environment(\.scenePhase) private var scenePhase
-    /// 현재 펼침의 첫(왼쪽) 페이지 인덱스
-    @State private var currentPageIndex = 0
     @State private var flashEdge: Edge?
-    @State private var isTwoUp = false
     /// 필기 모드. 켜면 탭 넘김이 꺼지고 펜슬 캔버스가 입력을 받는다 (얼굴 제스처는 계속 동작)
     @State private var isAnnotating = false
     /// 페이지 인덕스별 필기 (정규화 좌표계)
@@ -32,14 +35,10 @@ struct ScoreViewerShell<Content: View>: View {
         PKToolPickerLassoItem(),
     ])
 
-    private var navigator: PageNavigator {
-        PageNavigator(pageCount: pageCount, twoUp: isTwoUp)
-    }
-
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                SpreadView(indices: navigator.visibleIndices(from: currentPageIndex), twoUp: isTwoUp,
+                SpreadView(indices: cursor.visibleIndices, twoUp: cursor.isTwoUp,
                            pageSize: pageSize) { index in
                     content(index)
                 } overlay: { index, scale in
@@ -53,8 +52,8 @@ struct ScoreViewerShell<Content: View>: View {
                 }
                 .padding(.horizontal, 8)
 
-                // 좌/우 30% 탭 영역 (필기 모드에서는 펜슬 입력을 방해하지 않도록 끔)
-                if !isAnnotating {
+                // 좌/우 30% 탭 영역 (필기 모드·따라가기 중에는 끔)
+                if !isAnnotating && !disablesTapTurning {
                     HStack(spacing: 0) {
                         Color.clear
                             .contentShape(Rectangle())
@@ -83,15 +82,22 @@ struct ScoreViewerShell<Content: View>: View {
                     FlashOverlay(edge: edge)
                 }
             }
-            .onAppear { isTwoUp = geo.size.width > geo.size.height }
+            .onAppear {
+                cursor.isTwoUp = geo.size.width > geo.size.height
+                cursor.snap()
+            }
             .onChange(of: geo.size) { _, size in
-                isTwoUp = size.width > size.height
+                cursor.isTwoUp = size.width > size.height
+                cursor.snap()
             }
         }
         .background(Color(.systemBackground))
         .navigationTitle(score.title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                accessory()
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 Toggle(isOn: $isAnnotating) {
                     Image(systemName: isAnnotating ? "pencil.tip.crop.circle.fill" : "pencil.tip.crop.circle")
@@ -113,19 +119,16 @@ struct ScoreViewerShell<Content: View>: View {
             }
         }
         .onAppear {
-            currentPageIndex = min(library.lastPage(of: score), max(pageCount - 1, 0))
+            cursor.pageCount = pageCount
+            cursor.leadingIndex = min(library.lastPage(of: score), max(pageCount - 1, 0))
             drawings = library.annotations.load(for: score.id)
             tracker.updateSettings(settings.gesture)
             tracker.start()
         }
         .onDisappear {
             tracker.pause()
-            library.setLastPage(currentPageIndex, of: score)
+            library.setLastPage(cursor.leadingIndex, of: score)
             saveDrawings()
-        }
-        .onChange(of: isTwoUp) { _, _ in
-            // 회전 시 펼침 경계(짝수 인덕스)에 맞춰 스냅
-            currentPageIndex = navigator.leadingIndex(from: currentPageIndex)
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { tracker.start() } else { tracker.pause() }
@@ -153,7 +156,7 @@ struct ScoreViewerShell<Content: View>: View {
     }
 
     private var pageLabel: String {
-        let visible = navigator.visibleIndices(from: currentPageIndex).map { $0 + 1 }
+        let visible = cursor.visibleIndices.map { $0 + 1 }
         guard let first = visible.first else { return "0 / \(pageCount)" }
         if let last = visible.last, last != first {
             return "\(first)–\(last) / \(pageCount)"
@@ -162,13 +165,7 @@ struct ScoreViewerShell<Content: View>: View {
     }
 
     func turn(_ event: PageTurnEvent) {
-        let target: Int
-        switch event {
-        case .next: target = navigator.next(from: currentPageIndex)
-        case .previous: target = navigator.previous(from: currentPageIndex)
-        }
-        guard target != currentPageIndex else { return }
-        currentPageIndex = target
+        guard cursor.turn(event) else { return }
         flash(event == .next ? .trailing : .leading)
     }
 
@@ -177,6 +174,16 @@ struct ScoreViewerShell<Content: View>: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
             withAnimation(.easeOut(duration: 0.3)) { flashEdge = nil }
         }
+    }
+}
+
+extension ScoreViewerShell where Accessory == EmptyView {
+    init(score: Score, library: ScoreLibraryStore, pageCount: Int, cursor: PageCursor,
+         pageSize: @escaping (Int) -> CGSize, disablesTapTurning: Bool = false,
+         @ViewBuilder content: @escaping (Int) -> Content) {
+        self.init(score: score, library: library, pageCount: pageCount, cursor: cursor,
+                  pageSize: pageSize, disablesTapTurning: disablesTapTurning,
+                  content: content, accessory: { EmptyView() })
     }
 }
 

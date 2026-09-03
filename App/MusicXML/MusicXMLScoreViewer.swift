@@ -9,6 +9,7 @@ enum MusicXMLPage {
 struct MusicXMLScoreViewer: View {
     let score: Score
     @ObservedObject var library: ScoreLibraryStore
+    @StateObject private var cursor = PageCursor()
     @State private var pageCount: Int?
     @State private var errorMessage: String?
     @State private var svgs: [Int: String] = [:]
@@ -20,6 +21,7 @@ struct MusicXMLScoreViewer: View {
                     score: score,
                     library: library,
                     pageCount: pageCount,
+                    cursor: cursor,
                     pageSize: { _ in MusicXMLPage.size }
                 ) { index in
                     SVGPage(index: index, svgs: $svgs)

@@ -5,6 +5,7 @@ import PDFKit
 struct PDFScoreViewer: View {
     let score: Score
     @ObservedObject var library: ScoreLibraryStore
+    @StateObject private var cursor = PageCursor()
     @State private var document: PDFDocument?
     @State private var failed = false
 
@@ -15,6 +16,7 @@ struct PDFScoreViewer: View {
                     score: score,
                     library: library,
                     pageCount: document.pageCount,
+                    cursor: cursor,
                     pageSize: { index in
                         document.page(at: index).map(PDFPageImage.displaySize(of:))
                             ?? CGSize(width: 595, height: 842)
