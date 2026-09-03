@@ -2,15 +2,26 @@ import SwiftUI
 
 @main
 struct ScoreApp: App {
-    @StateObject private var library = ScoreLibraryStore()
+    @StateObject private var pdfLibrary = ScoreLibraryStore(kind: .pdf)
+    @StateObject private var xmlLibrary = ScoreLibraryStore(kind: .musicXML)
     @StateObject private var settings = AppSettings()
 
     var body: some Scene {
         WindowGroup {
-            LibraryView(library: library)
+            RootTabView(pdfLibrary: pdfLibrary, xmlLibrary: xmlLibrary)
                 .environmentObject(settings)
                 .onAppear {
-                    library.installSamplesIfNeeded(BundledSample.bundled(for: .pdf))
+                    pdfLibrary.installSamplesIfNeeded(BundledSample.bundled(for: .pdf))
+                    xmlLibrary.installSamplesIfNeeded(BundledSample.bundled(for: .musicXML))
+                    _ = VerovioEngine.shared   // WASM 초기화를 미리 시작
+                }
+                .onOpenURL { url in
+                    // Files/AirDrop "다음으로 열기": 확장자로 종류 판별
+                    switch ScoreKind.kind(forExtension: url.pathExtension) {
+                    case .pdf: try? pdfLibrary.importFile(from: url)
+                    case .musicXML: try? xmlLibrary.importFile(from: url)
+                    case nil: break
+                    }
                 }
         }
     }

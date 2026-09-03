@@ -1,7 +1,10 @@
 import SwiftUI
 
+/// 악보 보관함. 카드 탭 시 `onOpen`으로 악보를 넘겨 루트가 전체 화면 뷰어를 연다.
 struct LibraryView: View {
     @ObservedObject var library: ScoreLibraryStore
+    let onOpen: (Score) -> Void
+
     @State private var showImporter = false
     @State private var importError: String?
     @State private var renamingScore: Score?
@@ -21,8 +24,8 @@ struct LibraryView: View {
                 if library.scores.isEmpty {
                     ContentUnavailableView(
                         "악보가 없습니다",
-                        systemImage: "music.note.list",
-                        description: Text("오른쪽 위 + 버튼으로 PDF 악보를 가져오세요.")
+                        systemImage: library.kind.symbolName,
+                        description: Text("오른쪽 위 + 버튼으로 \(library.kind.formatDescription) 악보를 가져오세요.")
                     )
                     .padding(.top, 120)
                 } else if visibleScores.isEmpty {
@@ -40,25 +43,17 @@ struct LibraryView: View {
                 } else {
                     LazyVGrid(columns: columns, spacing: 24) {
                         ForEach(visibleScores) { score in
-                            ScoreCell(library: library, score: score, onRename: { beginRename(score) })
+                            ScoreCell(library: library, score: score,
+                                      onOpen: { onOpen(score) },
+                                      onRename: { beginRename(score) })
                         }
                     }
                     .padding()
                 }
             }
-            .navigationTitle("악보 보관함")
+            .navigationTitle(library.kind.title)
             .searchable(text: $searchText, prompt: "제목으로 검색")
-            .navigationDestination(for: Score.self) { score in
-                PDFScoreViewer(score: score, library: library)
-            }
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    NavigationLink {
-                        SettingsView()
-                    } label: {
-                        Image(systemName: "gearshape")
-                    }
-                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Toggle(isOn: $favoritesOnly) {
                         Image(systemName: favoritesOnly ? "star.fill" : "star")
@@ -76,7 +71,7 @@ struct LibraryView: View {
             }
             .fileImporter(
                 isPresented: $showImporter,
-                allowedContentTypes: [.pdf],
+                allowedContentTypes: library.kind.contentTypes,
                 allowsMultipleSelection: true
             ) { result in
                 guard case .success(let urls) = result else { return }
@@ -99,10 +94,6 @@ struct LibraryView: View {
                 Button("취소", role: .cancel) { renamingScore = nil }
             }
         }
-        .onOpenURL { url in
-            // Files/AirDrop의 "다음으로 열기"로 전달된 PDF
-            try? library.importFile(from: url)
-        }
     }
 
     private func beginRename(_ score: Score) {
@@ -111,16 +102,17 @@ struct LibraryView: View {
     }
 }
 
-/// 악보 카드. 썸네일은 뷰어로 이동하는 링크, 제목 옆 ⋯ 메뉴는 링크 바깥에 두어
-/// 탭이 링크에 가로채이지 않게 한다.
+/// 악보 카드. 썸네일을 누르면 뷰어가 열리고, 제목 옆 ⋯ 메뉴는 버튼 바깥에 두어
+/// 탭이 가로채이지 않게 한다.
 struct ScoreCell: View {
     @ObservedObject var library: ScoreLibraryStore
     let score: Score
+    let onOpen: () -> Void
     let onRename: () -> Void
 
     var body: some View {
         VStack(spacing: 8) {
-            NavigationLink(value: score) {
+            Button(action: onOpen) {
                 thumbnail
             }
             .buttonStyle(.plain)
@@ -151,7 +143,7 @@ struct ScoreCell: View {
                     .resizable()
                     .scaledToFit()
             } else {
-                Image(systemName: "doc.richtext")
+                Image(systemName: score.kind.symbolName)
                     .font(.system(size: 48))
                     .foregroundStyle(.secondary)
             }

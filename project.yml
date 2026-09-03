@@ -36,6 +36,22 @@ targets:
           - CFBundleTypeName: PDF Document
             LSHandlerRank: Alternate
             LSItemContentTypes: [com.adobe.pdf]
+          - CFBundleTypeName: MusicXML Score
+            LSHandlerRank: Alternate
+            LSItemContentTypes: [com.yru.musicxml, com.yru.mxl, public.xml]
+        UTImportedTypeDeclarations:
+          - UTTypeIdentifier: com.yru.musicxml
+            UTTypeDescription: MusicXML Score
+            UTTypeConformsTo: [public.xml]
+            UTTypeTagSpecification:
+              public.filename-extension: [musicxml]
+              public.mime-type: [application/vnd.recordare.musicxml+xml]
+          - UTTypeIdentifier: com.yru.mxl
+            UTTypeDescription: Compressed MusicXML Score
+            UTTypeConformsTo: [public.data]
+            UTTypeTagSpecification:
+              public.filename-extension: [mxl]
+              public.mime-type: [application/vnd.recordare.musicxml]
     settings:
       base:
         TARGETED_DEVICE_FAMILY: "2"
