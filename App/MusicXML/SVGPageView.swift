@@ -1,15 +1,37 @@
 import SwiftUI
 import WebKit
 
+/// 표시 웹뷰에 JS 질의를 보내기 위한 핸들 (페이지별 1개)
+@MainActor
+final class SVGPageController: ObservableObject {
+    weak var webView: WKWebView?
+
+    /// 페이지 내 정규화 좌표(0…1)에 있는 마디(g.measure)의 id
+    func measureID(atX x: CGFloat, y: CGFloat) async -> String? {
+        guard let webView else { return nil }
+        let js = """
+        (function(){
+          const e = document.elementFromPoint(\(x) * window.innerWidth, \(y) * window.innerHeight);
+          const m = e && e.closest('g.measure');
+          return m ? m.id : '';
+        })()
+        """
+        let result = try? await webView.evaluateJavaScript(js) as? String
+        return (result?.isEmpty ?? true) ? nil : result
+    }
+}
+
 /// Verovio가 만든 SVG 페이지 하나를 표시하는 가벼운 웹뷰.
 /// 상호작용은 받지 않는다(탭 영역·필기 캔버스가 위에서 처리).
 struct SVGPageView: UIViewRepresentable {
     let svg: String
-    /// 하이라이트할 SVG 요소 id 목록 (2B 따라가기에서 사용)
+    /// 하이라이트할 SVG 요소 id 목록 (따라가기)
     var highlightIDs: [String] = []
+    var controller: SVGPageController? = nil
 
     func makeUIView(context: Context) -> WKWebView {
         let webView = WKWebView()
+        controller?.webView = webView
         webView.isOpaque = false
         webView.backgroundColor = .white
         webView.scrollView.isScrollEnabled = false
@@ -20,6 +42,7 @@ struct SVGPageView: UIViewRepresentable {
     }
 
     func updateUIView(_ webView: WKWebView, context: Context) {
+        controller?.webView = webView
         if context.coordinator.loadedSVG != svg {
             context.coordinator.loadedSVG = svg
             context.coordinator.pendingHighlight = highlightIDs
