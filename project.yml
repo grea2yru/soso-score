@@ -63,6 +63,9 @@ targets:
         TARGETED_DEVICE_FAMILY: "2"
         SWIFT_VERSION: "5.9"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        # String Catalog 추출을 컴파일러가 수행 — Button/Section/Label 등 LocalizedStringKey 문구와
+        # String(localized:)·String.LocalizationValue 문구까지 인식 (기본 regex 추출은 Text("…")만 잡음)
+        SWIFT_EMIT_LOC_STRINGS: YES
         # 실기기 배포 시 Xcode에서 팀을 지정하거나 아래 주석을 해제해 팀 ID를 기입
         # DEVELOPMENT_TEAM: XXXXXXXXXX
   SoSoScoreTests:

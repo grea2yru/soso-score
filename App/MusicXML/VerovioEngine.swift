@@ -10,8 +10,8 @@ enum VerovioError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .notReady: return L10n.string("악보 엔진이 준비되지 않았습니다.")
-        case .loadFailed(let detail): return L10n.format("악보를 열 수 없습니다. (%@)", detail)
-        case .scriptFailed(let detail): return L10n.format("악보 렌더링 오류: %@", detail)
+        case .loadFailed(let detail): return L10n.string("악보를 열 수 없습니다. (\(detail))")
+        case .scriptFailed(let detail): return L10n.string("악보 렌더링 오류: \(detail)")
         }
     }
 }

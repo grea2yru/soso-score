@@ -99,7 +99,7 @@ final class TypesetDocument {
         let cache = typesetter.cache
         let key = key
         // 캐시 저장에 실패해도 뷰어는 엔진으로 계속 동작한다
-        if let stored = try? await Task.detached(priority: .utility) { try cache.store(contents, forKey: key) }.value {
+        if let stored = try? await Task.detached(priority: .utility, operation: { try cache.store(contents, forKey: key) }).value {
             bundle = stored
             releaseEngine()
         }
@@ -221,7 +221,7 @@ final class ScoreTypesetter {
 
     private func prefetch(_ score: Score) async {
         let cache = cache
-        guard let key = try? await Task.detached(priority: .utility) { try cache.key(for: score.url) }.value else { return }
+        guard let key = try? await Task.detached(priority: .utility, operation: { try cache.key(for: score.url) }).value else { return }
         guard cache.bundle(forKey: key) == nil else { return }
         guard currentLease == nil, !Task.isCancelled else {
             prefetchQueue.insert(score, at: 0)

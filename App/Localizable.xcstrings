@@ -1,1062 +1,1062 @@
 {
-  "sourceLanguage": "ko",
-  "version": "1.0",
-  "strings": {
-    "PDF 악보": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "PDF Scores"
+  "sourceLanguage" : "ko",
+  "strings" : {
+    "%@ 메뉴" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ menu"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "PDF 악보"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 메뉴"
           }
         }
       }
     },
-    "디지털 악보": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Digital Scores"
+    "MusicXML 파일이 아니거나 열 수 없습니다." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not a MusicXML file, or it can't be opened."
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "디지털 악보"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MusicXML 파일이 아니거나 열 수 없습니다."
           }
         }
       }
     },
-    "설정": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Settings"
+    "MusicXML(.musicxml/.mxl)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MusicXML (.musicxml/.mxl)"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "설정"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MusicXML(.musicxml/.mxl)"
           }
         }
       }
     },
-    "보관함으로": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Library"
+    "PDF" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PDF"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "보관함으로"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PDF"
           }
         }
       }
     },
-    "PDF": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "PDF"
+    "PDF 악보" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PDF Scores"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "PDF"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PDF 악보"
           }
         }
       }
     },
-    "MusicXML(.musicxml/.mxl)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "MusicXML (.musicxml/.mxl)"
+    "PDF 파일을 열 수 없습니다." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The PDF file can't be opened."
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "MusicXML(.musicxml/.mxl)"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PDF 파일을 열 수 없습니다."
           }
         }
       }
     },
-    "악보가 없습니다": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No Scores Yet"
+    "PDF를 열 수 없습니다" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't Open PDF"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "악보가 없습니다"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PDF를 열 수 없습니다"
           }
         }
       }
     },
-    "오른쪽 위 + 버튼으로 %@ 악보를 가져오세요.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tap + at the top right to import %@ scores."
+    "SVG 없음" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "no SVG"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "오른쪽 위 + 버튼으로 %@ 악보를 가져오세요."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SVG 없음"
           }
         }
       }
     },
-    "즐겨찾기한 악보가 없습니다": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No Favorites"
+    "가져오기 실패" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import Failed"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "즐겨찾기한 악보가 없습니다"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가져오기 실패"
           }
         }
       }
     },
-    "악보 카드의 ⋯ 메뉴에서 즐겨찾기에 추가하세요.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Use the ⋯ menu on a score card to add favorites."
+    "감김 민감도" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Closed-eye sensitivity"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "악보 카드의 ⋯ 메뉴에서 즐겨찾기에 추가하세요."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "감김 민감도"
           }
         }
       }
     },
-    "제목으로 검색": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Search by title"
+    "감지 각도" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trigger angle"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "제목으로 검색"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "감지 각도"
           }
         }
       }
     },
-    "즐겨찾기만 보기": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Favorites only"
+    "고개 각도 (yaw, 오른쪽이 +)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Head angle (yaw, right is +)"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "즐겨찾기만 보기"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "고개 각도 (yaw, 오른쪽이 +)"
           }
         }
       }
     },
-    "가져오기 실패": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Import Failed"
+    "고개 돌리기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Head Turn"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "가져오기 실패"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "고개 돌리기"
           }
         }
       }
     },
-    "확인": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "OK"
+    "공통" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "General"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "확인"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "공통"
           }
         }
       }
     },
-    "취소": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cancel"
+    "기본값으로 되돌리기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset to Defaults"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "취소"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기본값으로 되돌리기"
           }
         }
       }
     },
-    "제목 변경": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rename"
+    "끄기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Off"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "제목 변경"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "끄기"
           }
         }
       }
     },
-    "악보 제목": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Score title"
+    "둘 다" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Both"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "악보 제목"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "둘 다"
           }
         }
       }
     },
-    "%@ 메뉴": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ menu"
+    "디지털 악보" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Digital Scores"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ 메뉴"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "디지털 악보"
           }
         }
       }
     },
-    "즐겨찾기 추가": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Add to Favorites"
+    "따라가기 끄기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop following"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "즐겨찾기 추가"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "따라가기 끄기"
           }
         }
       }
     },
-    "즐겨찾기 해제": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Remove from Favorites"
+    "따라가기 켜기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start following"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "즐겨찾기 해제"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "따라가기 켜기"
           }
         }
       }
     },
-    "삭제": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Delete"
+    "마이크 권한이 없어 따라가기를 쓸 수 없습니다. 설정 앱 > 개인정보 보호 > 마이크에서 허용해 주세요." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Score following needs microphone access. Allow it in Settings > Privacy & Security > Microphone."
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "삭제"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마이크 권한이 없어 따라가기를 쓸 수 없습니다. 설정 앱 > 개인정보 보호 > 마이크에서 허용해 주세요."
           }
         }
       }
     },
-    "PDF 파일을 열 수 없습니다.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The PDF file can't be opened."
+    "방식" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Method"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "PDF 파일을 열 수 없습니다."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "방식"
           }
         }
       }
     },
-    "MusicXML 파일이 아니거나 열 수 없습니다.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Not a MusicXML file, or it can't be opened."
+    "방향 반전 (왼쪽/왼눈 = 다음)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reverse direction (left / left eye = next)"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "MusicXML 파일이 아니거나 열 수 없습니다."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "방향 반전 (왼쪽/왼눈 = 다음)"
           }
         }
       }
     },
-    "PDF를 열 수 없습니다": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Can't Open PDF"
+    "보관함으로" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Library"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "PDF를 열 수 없습니다"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "보관함으로"
           }
         }
       }
     },
-    "악보를 열 수 없습니다": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Can't Open Score"
+    "삭제" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "악보를 열 수 없습니다"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "삭제"
           }
         }
       }
     },
-    "악보를 조판하는 중…": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Engraving score…"
+    "설정" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "악보를 조판하는 중…"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설정"
           }
         }
       }
     },
-    "악보 엔진이 준비되지 않았습니다.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The score engine isn't ready."
+    "시스템 맵 실패" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "system map failed"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "악보 엔진이 준비되지 않았습니다."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시스템 맵 실패"
           }
         }
       }
     },
-    "악보를 열 수 없습니다. (%@)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The score can't be opened. (%@)"
+    "시스템 설정 따름" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Follow System"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "악보를 열 수 없습니다. (%@)"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시스템 설정 따름"
           }
         }
       }
     },
-    "악보 렌더링 오류: %@": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Score rendering error: %@"
+    "실시간 값 (보정용)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live Values (calibration)"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "악보 렌더링 오류: %@"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "실시간 값 (보정용)"
           }
         }
       }
     },
-    "조판 실패": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "engraving failed"
+    "악보 렌더링 오류: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Score rendering error: %@"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "조판 실패"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "악보 렌더링 오류: %@"
           }
         }
       }
     },
-    "SVG 없음": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "no SVG"
+    "악보 엔진이 준비되지 않았습니다." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The score engine isn't ready."
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SVG 없음"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "악보 엔진이 준비되지 않았습니다."
           }
         }
       }
     },
-    "타임맵 없음": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "no timemap"
+    "악보 제목" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Score title"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "타임맵 없음"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "악보 제목"
           }
         }
       }
     },
-    "페이지 조회 실패": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "page lookup failed"
+    "악보 카드의 ⋯ 메뉴에서 즐겨찾기에 추가하세요." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use the ⋯ menu on a score card to add favorites."
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "페이지 조회 실패"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "악보 카드의 ⋯ 메뉴에서 즐겨찾기에 추가하세요."
           }
         }
       }
     },
-    "피치 조회 실패": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "pitch lookup failed"
+    "악보가 없습니다" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Scores Yet"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "피치 조회 실패"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "악보가 없습니다"
           }
         }
       }
     },
-    "시스템 맵 실패": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "system map failed"
+    "악보를 열 수 없습니다" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't Open Score"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "시스템 맵 실패"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "악보를 열 수 없습니다"
           }
         }
       }
     },
-    "카메라를 사용할 수 없어 손·탭으로만 넘길 수 있습니다. 설정 앱 > 개인정보 보호 > 카메라에서 권한을 확인하세요.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The camera isn't available, so pages can only be turned by tapping. Check the camera permission in Settings > Privacy & Security > Camera."
+    "악보를 열 수 없습니다. (%@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The score can't be opened. (%@)"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "카메라를 사용할 수 없어 손·탭으로만 넘길 수 있습니다. 설정 앱 > 개인정보 보호 > 카메라에서 권한을 확인하세요."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "악보를 열 수 없습니다. (%@)"
           }
         }
       }
     },
-    "마이크 권한이 없어 따라가기를 쓸 수 없습니다. 설정 앱 > 개인정보 보호 > 마이크에서 허용해 주세요.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Score following needs microphone access. Allow it in Settings > Privacy & Security > Microphone."
+    "악보를 조판하는 중…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Engraving score…"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "마이크 권한이 없어 따라가기를 쓸 수 없습니다. 설정 앱 > 개인정보 보호 > 마이크에서 허용해 주세요."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "악보를 조판하는 중…"
           }
         }
       }
     },
-    "필기 모드": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Annotation mode"
+    "앱 언어" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Language"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "필기 모드"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱 언어"
           }
         }
       }
     },
-    "얼굴 추적 중": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tracking face"
+    "언어" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Language"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "얼굴 추적 중"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "언어"
           }
         }
       }
     },
-    "얼굴 미검출": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No face detected"
+    "얼굴 미검출" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No face detected"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "얼굴 미검출"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "얼굴 미검출"
           }
         }
       }
     },
-    "입력 레벨": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Input level"
+    "얼굴 추적 중" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tracking face"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "입력 레벨"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "얼굴 추적 중"
           }
         }
       }
     },
-    "따라가기 켜기": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Start following"
+    "얼굴이 감지되지 않았습니다. 화면 앞에 얼굴을 비춰주세요." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No face detected. Face the screen."
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "따라가기 켜기"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "얼굴이 감지되지 않았습니다. 화면 앞에 얼굴을 비춰주세요."
           }
         }
       }
     },
-    "따라가기 끄기": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stop following"
+    "오른눈 감김" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Right eye closed"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "따라가기 끄기"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오른눈 감김"
           }
         }
       }
     },
-    "언어": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Language"
+    "오른쪽 위 + 버튼으로 %@ 악보를 가져오세요." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap + at the top right to import %@ scores."
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "언어"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오른쪽 위 + 버튼으로 %@ 악보를 가져오세요."
           }
         }
       }
     },
-    "앱 언어": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "App Language"
+    "왼눈 감김" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Left eye closed"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "앱 언어"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "왼눈 감김"
           }
         }
       }
     },
-    "시스템 설정 따름": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Follow System"
+    "윙크" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wink"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "시스템 설정 따름"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "윙크"
           }
         }
       }
     },
-    "페이지 넘김 제스처": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Page Turn Gesture"
+    "유지 시간" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hold time"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "페이지 넘김 제스처"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "유지 시간"
           }
         }
       }
     },
-    "방식": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Method"
+    "이 기기에서는 얼굴 추적을 사용할 수 없습니다. (시뮬레이터 포함)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Face tracking isn't available on this device (including the simulator)."
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "방식"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 기기에서는 얼굴 추적을 사용할 수 없습니다. (시뮬레이터 포함)"
           }
         }
       }
     },
-    "고개 돌리기": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Head Turn"
+    "입력 레벨" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Input level"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "고개 돌리기"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "입력 레벨"
           }
         }
       }
     },
-    "윙크": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wink"
+    "제목 변경" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rename"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "윙크"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "제목 변경"
           }
         }
       }
     },
-    "둘 다": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Both"
+    "제목으로 검색" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search by title"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "둘 다"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "제목으로 검색"
           }
         }
       }
     },
-    "끄기": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Off"
+    "조판 실패" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "engraving failed"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "끄기"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "조판 실패"
           }
         }
       }
     },
-    "방향 반전 (왼쪽/왼눈 = 다음)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reverse direction (left / left eye = next)"
+    "즐겨찾기 추가" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add to Favorites"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "방향 반전 (왼쪽/왼눈 = 다음)"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "즐겨찾기 추가"
           }
         }
       }
     },
-    "감지 각도": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Trigger angle"
+    "즐겨찾기 해제" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove from Favorites"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "감지 각도"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "즐겨찾기 해제"
           }
         }
       }
     },
-    "유지 시간": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hold time"
+    "즐겨찾기만 보기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Favorites only"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "유지 시간"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "즐겨찾기만 보기"
           }
         }
       }
     },
-    "감김 민감도": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Closed-eye sensitivity"
+    "즐겨찾기한 악보가 없습니다" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Favorites"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "감김 민감도"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "즐겨찾기한 악보가 없습니다"
           }
         }
       }
     },
-    "공통": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "General"
+    "초" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "s"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "공통"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "초"
           }
         }
       }
     },
-    "쿨다운": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cooldown"
+    "취소" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "쿨다운"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "취소"
           }
         }
       }
     },
-    "초": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "s"
+    "카메라를 사용할 수 없어 손·탭으로만 넘길 수 있습니다. 설정 앱 > 개인정보 보호 > 카메라에서 권한을 확인하세요." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The camera isn't available, so pages can only be turned by tapping. Check the camera permission in Settings > Privacy & Security > Camera."
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "초"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "카메라를 사용할 수 없어 손·탭으로만 넘길 수 있습니다. 설정 앱 > 개인정보 보호 > 카메라에서 권한을 확인하세요."
           }
         }
       }
     },
-    "기본값으로 되돌리기": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reset to Defaults"
+    "쿨다운" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cooldown"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "기본값으로 되돌리기"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "쿨다운"
           }
         }
       }
     },
-    "실시간 값 (보정용)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Live Values (calibration)"
+    "타임맵 없음" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "no timemap"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "실시간 값 (보정용)"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "타임맵 없음"
           }
         }
       }
     },
-    "이 기기에서는 얼굴 추적을 사용할 수 없습니다. (시뮬레이터 포함)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Face tracking isn't available on this device (including the simulator)."
+    "페이지 넘김 제스처" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Page Turn Gesture"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "이 기기에서는 얼굴 추적을 사용할 수 없습니다. (시뮬레이터 포함)"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "페이지 넘김 제스처"
           }
         }
       }
     },
-    "고개 각도 (yaw, 오른쪽이 +)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Head angle (yaw, right is +)"
+    "페이지 조회 실패" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "page lookup failed"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "고개 각도 (yaw, 오른쪽이 +)"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "페이지 조회 실패"
           }
         }
       }
     },
-    "왼눈 감김": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Left eye closed"
+    "피치 조회 실패" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pitch lookup failed"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "왼눈 감김"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "피치 조회 실패"
           }
         }
       }
     },
-    "오른눈 감김": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Right eye closed"
+    "필기 모드" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annotation mode"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "오른눈 감김"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "필기 모드"
           }
         }
       }
     },
-    "얼굴이 감지되지 않았습니다. 화면 앞에 얼굴을 비춰주세요.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No face detected. Face the screen."
+    "확인" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "얼굴이 감지되지 않았습니다. 화면 앞에 얼굴을 비춰주세요."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "확인"
           }
         }
       }
     }
-  }
+  },
+  "version" : "1.0"
 }

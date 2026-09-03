@@ -17,7 +17,7 @@ final class LocalizationTests: XCTestCase {
         XCTAssertEqual(L10n.string("설정"), "Settings")
         XCTAssertEqual(L10n.string("PDF 악보"), "PDF Scores")
         XCTAssertEqual(ScoreKind.musicXML.title, "Digital Scores")
-        XCTAssertEqual(L10n.format("악보 렌더링 오류: %@", "x"), "Score rendering error: x")
+        XCTAssertEqual(L10n.string("악보 렌더링 오류: \("x")"), "Score rendering error: x")
     }
 
     func testKoreanBundleKeepsSourceStrings() {
