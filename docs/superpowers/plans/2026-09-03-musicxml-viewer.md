@@ -1168,6 +1168,9 @@ git commit -m "feat: MusicXML 뷰어 — SVG 페이지 표시 웹뷰와 Verovio 
 
 ### Task 5: 탭 구조 + 보관함 종류별 연결 + 문서 타입
 
+> 실행 메모: iPadOS 18 상단 탭 바는 push된 뷰어에서 숨겨지지 않아, 뷰어를 `fullScreenCover(item:)`로 열도록 변경했다.
+> `LibraryView(library:onOpen:)`가 카드 탭을 루트에 알리고, `RootTabView`가 커버 안에 `NavigationStack` + 닫기 버튼을 둔다.
+
 **Files:**
 - Create: `App/Views/RootTabView.swift`
 - Modify: `App/ScoreApp.swift`, `App/Views/LibraryView.swift`, `project.yml`

@@ -34,6 +34,9 @@ MusicXML(.musicxml / .mxl) 악보를 가져와 PDF 악보와 **같은 사용 경
 
 - `TabView` 3탭: **PDF 악보** | **디지털 악보** | **설정**. iPadOS 18 상단 탭 바(`.tabViewStyle(.sidebarAdaptable)`).
   기존 보관함의 톱니바퀴 버튼은 제거하고 설정 탭으로 이동.
+- 뷰어는 탭 안에서 push하지 않고 **전체 화면 커버(`fullScreenCover`)** 로 연다. iPadOS 18 상단 탭 바는 개별 뷰의
+  숨김 지시(`toolbarVisibility(.hidden, for: .tabBar)`)를 따르지 않아, 연주 중 악보에 화면을 최대한 주려면 커버가
+  필요하다. 커버 왼쓱 위 `<` 버튼으로 보관함에 돌아온다. (구현 중 확인된 제약으로 설계 변경)
 - 두 보관함은 같은 `LibraryView`를 쓰되 저장소(`ScoreLibraryStore`)와 뷰어 목적지만 다르다.
   검색·즐겨찾기·⋯ 메뉴(제목 변경/즐겨찾기/삭제)·가져오기 UI가 동일.
 - 디지털 악보 카드: 썸네일 대신 악보 아이콘(`music.note.list`) + 제목(파일명). (2A에서는 조판 썸네일 생략)
