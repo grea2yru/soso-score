@@ -30,6 +30,24 @@ final class VerovioEngineTests: XCTestCase {
         XCTAssertFalse(systems.measures.isEmpty)
     }
 
+    func testAllBundledMusicXMLSamplesLoad() async throws {
+        let samples = BundledSample.bundled(for: .musicXML)
+        XCTAssertEqual(samples.count, 10)
+        let engine = VerovioEngine()
+        for sample in samples {
+            let pages = try await engine.load(fileURL: sample.url)
+            XCTAssertGreaterThan(pages, 0, sample.title)
+        }
+    }
+
+    func testAllBundledPDFSamplesAreValid() {
+        let samples = BundledSample.bundled(for: .pdf)
+        XCTAssertEqual(samples.count, 10)
+        for sample in samples {
+            XCTAssertTrue(ScoreKind.pdf.validate(fileAt: sample.url), sample.title)
+        }
+    }
+
     func testLoadInvalidFileThrows() async throws {
         let bad = FileManager.default.temporaryDirectory.appendingPathComponent("bad.musicxml")
         try Data("<not-music/>".utf8).write(to: bad)

@@ -11,18 +11,43 @@ struct Score: Identifiable, Hashable {
 }
 
 /// 앱에 내장된 기본 샘플 악보. 출처와 라이선스는 Samples/LICENSE.md 참고.
+/// 목록의 첫 항목은 이전 버전(불리언 플래그 시절)부터 있던 샘플이어야 한다 (설치 기록 이관용).
 struct BundledSample {
     let url: URL
     let title: String
 
+    private static func sample(_ resource: String, _ ext: String, _ title: String) -> BundledSample? {
+        Bundle.main.url(forResource: resource, withExtension: ext).map { BundledSample(url: $0, title: title) }
+    }
+
     static func bundled(for kind: ScoreKind) -> [BundledSample] {
         switch kind {
         case .pdf:
-            guard let url = Bundle.main.url(forResource: "debussy-clair-de-lune", withExtension: "pdf") else { return [] }
-            return [BundledSample(url: url, title: "드뷔시 - 달빛 (Clair de Lune)")]
+            return [
+                sample("debussy-clair-de-lune", "pdf", "드뷔시 - 달빛 (Clair de Lune)"),
+                sample("chopin-nocturne-op9-no2", "pdf", "쇼팽 - 녹턴 Op.9 No.2"),
+                sample("chopin-etude-op10-no12", "pdf", "쇼팽 - 연습곡 Op.10 No.12 「혁명」"),
+                sample("chopin-etude-op10-no5", "pdf", "쇼팽 - 연습곡 Op.10 No.5 「흑건」"),
+                sample("satie-gnossienne-no1", "pdf", "사티 - 그노시엔 1번"),
+                sample("mozart-k309-1", "pdf", "모차르트 - 피아노 소나타 K.309 1악장"),
+                sample("beethoven-op2-no1-1", "pdf", "베토벤 - 피아노 소나타 1번 Op.2 No.1 1악장"),
+                sample("beethoven-op10-no2-1", "pdf", "베토벤 - 피아노 소나타 6번 Op.10 No.2 1악장"),
+                sample("schumann-kinderszenen-no1", "pdf", "슈만 - 어린이 정경 1번 「미지의 나라들」"),
+                sample("schumann-traeumerei", "pdf", "슈만 - 어린이 정경 7번 「트로이메라이」"),
+            ].compactMap { $0 }
         case .musicXML:
-            guard let url = Bundle.main.url(forResource: "bach-bwv846", withExtension: "mxl") else { return [] }
-            return [BundledSample(url: url, title: "바흐 - 평균율 1권 전주곡 C장조 (BWV 846)")]
+            return [
+                sample("bach-bwv846", "mxl", "바흐 - 평균율 1권 전주곡 C장조 (BWV 846)"),
+                sample("mozart-k545-1", "mxl", "모차르트 - 피아노 소나타 K.545 1악장 (제시부)"),
+                sample("joplin-maple-leaf-rag", "mxl", "조플린 - 메이플 리프 래그"),
+                sample("cschumann-polonaise-op1-no1", "mxl", "클라라 슈만 - 폴로네즈 Op.1 No.1"),
+                sample("cschumann-polonaise-op1-no2", "mxl", "클라라 슈만 - 폴로네즈 Op.1 No.2"),
+                sample("cschumann-polonaise-op1-no3", "mxl", "클라라 슈만 - 폴로네즈 Op.1 No.3"),
+                sample("bach-bwv227-1", "mxl", "바흐 - 코랄 「예수, 나의 기쁨」 (BWV 227-1)"),
+                sample("bach-bwv244-54", "mxl", "바흐 - 코랄 「오 피와 상처로 가득한 머리」 (BWV 244-54)"),
+                sample("bach-bwv269", "mxl", "바흐 - 코랄 「내 마음의 깊은 곳에서」 (BWV 269)"),
+                sample("schubert-lindenbaum", "xml", "슈베르트 - 보리수 (Der Lindenbaum)"),
+            ].compactMap { $0 }
         }
     }
 }
@@ -120,14 +145,25 @@ final class ScoreLibraryStore: ObservableObject {
         reload()
     }
 
-    /// 최초 1회만 샘플을 보관함에 복사한다. 사용자가 지운 샘플은 다시 설치하지 않는다.
+    /// 아직 설치한 적 없는 샘플만 보관함에 복사한다. 사용자가 지운 샘플은 다시 설치하지 않으며,
+    /// 나중에 추가된 샘플은 기존 사용자에게도 설치된다.
     func installSamplesIfNeeded(_ samples: [BundledSample]) {
-        guard !defaults.bool(forKey: kind.samplesInstalledKey) else { return }
-        for sample in samples {
-            let dest = directory.appendingPathComponent("\(sample.title).\(sample.url.pathExtension)")
-            guard !FileManager.default.fileExists(atPath: dest.path) else { continue }
-            try? FileManager.default.copyItem(at: sample.url, to: dest)
+        var installed = Set(defaults.stringArray(forKey: kind.installedSamplesKey) ?? [])
+        // 이전 버전(불리언 플래그) 호환: 목록이 없고 플래그만 있으면 첫 샘플은 이미 설치된 것으로 본다
+        if installed.isEmpty, defaults.bool(forKey: kind.samplesInstalledKey), let first = samples.first {
+            installed.insert(first.title)
         }
+        var changed = false
+        for sample in samples where !installed.contains(sample.title) {
+            let dest = directory.appendingPathComponent("\(sample.title).\(sample.url.pathExtension)")
+            if !FileManager.default.fileExists(atPath: dest.path) {
+                try? FileManager.default.copyItem(at: sample.url, to: dest)
+            }
+            installed.insert(sample.title)
+            changed = true
+        }
+        guard changed else { return }
+        defaults.set(Array(installed).sorted(), forKey: kind.installedSamplesKey)
         defaults.set(true, forKey: kind.samplesInstalledKey)
         reload()
     }

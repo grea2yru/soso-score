@@ -64,6 +64,14 @@ enum ScoreKind: String, CaseIterable, Hashable {
         }
     }
 
+    /// 설치된 샘플 제목 목록 키 (샘플별 추적; 나중에 추가된 샘플도 설치되도록)
+    var installedSamplesKey: String {
+        switch self {
+        case .pdf: return "installedSampleTitles"
+        case .musicXML: return "installedSampleTitles.musicxml"
+        }
+    }
+
     var lastPageKeyPrefix: String {
         switch self {
         case .pdf: return "lastPage."
