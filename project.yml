@@ -16,6 +16,9 @@ targets:
       - path: Samples
         buildPhase: resources
         excludes: ["LICENSE.md"]
+      - path: Vendor/verovio
+        type: folder
+        buildPhase: resources
     dependencies:
       - package: GestureCore
     info:

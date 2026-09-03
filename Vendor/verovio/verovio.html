@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<script src="verovio-toolkit-wasm.js"></script>
+</head><body>
+<script>
+window.vrvReady = false;
+let tk = null;
+verovio.module.onRuntimeInitialized = () => {
+  tk = new verovio.toolkit();
+  tk.setOptions({
+    breaks: "auto", adjustPageHeight: false, footer: "none", header: "auto",
+    svgViewBox: true, scale: 40,
+    pageWidth: 2100, pageHeight: 2970,
+    pageMarginTop: 100, pageMarginBottom: 100, pageMarginLeft: 100, pageMarginRight: 100
+  });
+  window.vrvReady = true;
+};
+function b64ToBytes(b64) {
+  const bin = atob(b64); const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+window.vrv = {
+  load: (base64, isZip) => {
+    const bytes = b64ToBytes(base64);
+    const ok = isZip ? tk.loadZipDataBuffer(bytes.buffer)
+                     : tk.loadData(new TextDecoder("utf-8").decode(bytes));
+    if (!ok) return -1;
+    return tk.getPageCount();
+  },
+  pageSVG: (n) => tk.renderToSVG(n, false),
+  timemap: () => JSON.stringify(tk.renderToTimemap({ includeMeasures: true, includeRests: false })),
+  midi: (id) => JSON.stringify(tk.getMIDIValuesForElement(id)),
+  pageWithElement: (id) => tk.getPageWithElement(id)
+};
+</script>
+</body></html>
