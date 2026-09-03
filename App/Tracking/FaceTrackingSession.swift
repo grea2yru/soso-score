@@ -18,7 +18,7 @@ final class FaceTrackingSession: NSObject, ObservableObject {
 
     /// 실기기 검증: 설정 화면의 실시간 값에서 고개를 "오른쪽"으로 돌렸을 때
     /// yaw가 음수로 나오면 이 값을 -1로 바꾼다.
-    private static let yawSign: Double = 1
+    nonisolated private static let yawSign: Double = 1
 
     private let session = ARSession()
     private var engine = GestureEngine()

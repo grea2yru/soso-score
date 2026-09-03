@@ -24,6 +24,7 @@ struct PDFPageImage: View {
             }
             .frame(width: geo.size.width, height: geo.size.height)
             .task(id: RenderKey(page: ObjectIdentifier(page), size: geo.size, scale: displayScale)) {
+                let page = page
                 let target = geo.size
                 let scale = displayScale
                 image = await Task.detached(priority: .userInitiated) {
@@ -41,7 +42,7 @@ struct PDFPageImage: View {
             : CGSize(width: bounds.width, height: bounds.height)
     }
 
-    private static func render(_ page: PDFPage, size: CGSize, scale: CGFloat) -> UIImage? {
+    nonisolated private static func render(_ page: PDFPage, size: CGSize, scale: CGFloat) -> UIImage? {
         guard size.width > 0, size.height > 0 else { return nil }
         return page.thumbnail(of: CGSize(width: size.width * scale, height: size.height * scale), for: .mediaBox)
     }

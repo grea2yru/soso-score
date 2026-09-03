@@ -46,7 +46,7 @@ final class VerovioEngine {
         throw VerovioError.notReady
     }
 
-    private func evaluate(_ script: String) async throws -> Any {
+    private func evaluate(_ script: String) async throws -> Any? {
         do {
             return try await webView.evaluateJavaScript(script)
         } catch {
