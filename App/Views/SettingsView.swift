@@ -6,6 +6,14 @@ struct SettingsView: View {
 
     var body: some View {
         Form {
+            Section("언어") {
+                Picker("앱 언어", selection: $settings.language) {
+                    Text("시스템 설정 따름").tag(AppLanguage.system)
+                    Text(verbatim: "한국어").tag(AppLanguage.korean)
+                    Text(verbatim: "English").tag(AppLanguage.english)
+                }
+            }
+
             Section("페이지 넘김 제스처") {
                 Picker("방식", selection: $settings.gesture.mode) {
                     Text("고개 돌리기").tag(GestureMode.head)
@@ -18,21 +26,21 @@ struct SettingsView: View {
 
             Section("고개 돌리기") {
                 LabeledSlider(label: "감지 각도", value: $settings.gesture.headYawThresholdDegrees,
-                              range: 10...35, format: "%.0f°")
+                              range: 10...35, format: "%.0f", unit: Text(verbatim: "°"))
                 LabeledSlider(label: "유지 시간", value: $settings.gesture.headHoldDuration,
-                              range: 0.1...1.0, format: "%.2f초")
+                              range: 0.1...1.0, format: "%.2f", unit: Text("초"))
             }
 
             Section("윙크") {
                 LabeledSlider(label: "감김 민감도", value: $settings.gesture.winkClosedThreshold,
-                              range: 0.5...0.95, format: "%.2f")
+                              range: 0.5...0.95, format: "%.2f", unit: nil)
                 LabeledSlider(label: "유지 시간", value: $settings.gesture.winkHoldDuration,
-                              range: 0.1...0.5, format: "%.2f초")
+                              range: 0.1...0.5, format: "%.2f", unit: Text("초"))
             }
 
             Section("공통") {
                 LabeledSlider(label: "쿨다운", value: $settings.gesture.cooldown,
-                              range: 0.5...3.0, format: "%.1f초")
+                              range: 0.5...3.0, format: "%.1f", unit: Text("초"))
                 Button("기본값으로 되돌리기") {
                     settings.gesture = .default
                 }
@@ -47,7 +55,8 @@ struct SettingsView: View {
                 }
             }
         }
-        .navigationTitle("설정")
+        // 내비게이션 제목은 환경 로케일을 따르지 않으므로 앱 언어 문자열을 직접 넣는다
+        .navigationTitle(Text(verbatim: L10n.string("설정")))
     }
 }
 
@@ -59,9 +68,15 @@ struct FaceDebugView: View {
     var body: some View {
         Group {
             if let frame = tracker.latestFrame, tracker.isTrackingFace {
-                LabeledContent("고개 각도(yaw)", value: String(format: "%+.1f° (오른쪽이 +)", frame.yawDegrees))
-                LabeledContent("왼눈 감김", value: String(format: "%.2f", frame.leftEyeBlink))
-                LabeledContent("오른눈 감김", value: String(format: "%.2f", frame.rightEyeBlink))
+                LabeledContent("고개 각도 (yaw, 오른쪽이 +)") {
+                    Text(verbatim: String(format: "%+.1f°", frame.yawDegrees))
+                }
+                LabeledContent("왼눈 감김") {
+                    Text(verbatim: String(format: "%.2f", frame.leftEyeBlink))
+                }
+                LabeledContent("오른눈 감김") {
+                    Text(verbatim: String(format: "%.2f", frame.rightEyeBlink))
+                }
             } else {
                 Text("얼굴이 감지되지 않았습니다. 화면 앞에 얼굴을 비춰주세요.")
                     .foregroundStyle(.secondary)
@@ -74,17 +89,20 @@ struct FaceDebugView: View {
 }
 
 struct LabeledSlider: View {
-    let label: String
+    let label: LocalizedStringKey
     @Binding var value: Double
     let range: ClosedRange<Double>
+    /// 숫자 부분의 형식 (예: "%.2f")
     let format: String
+    /// 단위 표시 (지역화된 Text 또는 nil)
+    let unit: Text?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
                 Text(label)
                 Spacer()
-                Text(String(format: format, value))
+                (Text(verbatim: String(format: format, value)) + (unit ?? Text(verbatim: "")))
                     .foregroundStyle(.secondary)
                     .monospacedDigit()
             }

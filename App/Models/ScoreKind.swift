@@ -1,5 +1,6 @@
 import Foundation
 import PDFKit
+import SwiftUI
 import UniformTypeIdentifiers
 
 extension UTType {
@@ -14,10 +15,19 @@ enum ScoreKind: String, CaseIterable, Hashable {
     case pdf
     case musicXML
 
-    var title: String {
+    /// 탭·보관함 제목 (지역화 키)
+    var titleKey: LocalizedStringKey {
         switch self {
         case .pdf: return "PDF 악보"
         case .musicXML: return "디지털 악보"
+        }
+    }
+
+    /// 문자열 컨텍스트용 제목 (현재 앱 언어)
+    var title: String {
+        switch self {
+        case .pdf: return L10n.string("PDF 악보")
+        case .musicXML: return L10n.string("디지털 악보")
         }
     }
 
@@ -79,8 +89,8 @@ enum ScoreKind: String, CaseIterable, Hashable {
         }
     }
 
-    /// 가져오기 안내에 쓰는 형식 설명
-    var formatDescription: String {
+    /// 가져오기 안내에 쓰는 형식 설명 (지역화 키)
+    var formatDescriptionKey: LocalizedStringKey {
         switch self {
         case .pdf: return "PDF"
         case .musicXML: return "MusicXML(.musicxml/.mxl)"

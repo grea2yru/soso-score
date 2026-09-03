@@ -10,6 +10,8 @@ struct ScoreApp: App {
         WindowGroup {
             RootTabView(pdfLibrary: pdfLibrary, xmlLibrary: xmlLibrary)
                 .environmentObject(settings)
+                // 앱 내 언어 설정: SwiftUI 문구(LocalizedStringKey)는 이 로케일로 조회된다
+                .environment(\.locale, settings.language.locale)
                 .onAppear {
                     pdfLibrary.installSamplesIfNeeded(BundledSample.bundled(for: .pdf))
                     xmlLibrary.installSamplesIfNeeded(BundledSample.bundled(for: .musicXML))

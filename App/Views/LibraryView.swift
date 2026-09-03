@@ -4,6 +4,8 @@ import SwiftUI
 struct LibraryView: View {
     @ObservedObject var library: ScoreLibraryStore
     let onOpen: (Score) -> Void
+    /// 언어 변경 시 제목 등 문자열 컨텍스트를 다시 그리기 위해 관찰
+    @EnvironmentObject private var settings: AppSettings
 
     @State private var showImporter = false
     @State private var importError: String?
@@ -22,11 +24,11 @@ struct LibraryView: View {
         NavigationStack {
             ScrollView {
                 if library.scores.isEmpty {
-                    ContentUnavailableView(
-                        "악보가 없습니다",
-                        systemImage: library.kind.symbolName,
-                        description: Text("오른쪽 위 + 버튼으로 \(library.kind.formatDescription) 악보를 가져오세요.")
-                    )
+                    ContentUnavailableView {
+                        Label("악보가 없습니다", systemImage: library.kind.symbolName)
+                    } description: {
+                        Text("오른쪽 위 + 버튼으로 \(Text(library.kind.formatDescriptionKey)) 악보를 가져오세요.")
+                    }
                     .padding(.top, 120)
                 } else if visibleScores.isEmpty {
                     if favoritesOnly && searchText.isEmpty {
@@ -51,15 +53,16 @@ struct LibraryView: View {
                     .padding()
                 }
             }
-            .navigationTitle(library.kind.title)
-            .searchable(text: $searchText, prompt: "제목으로 검색")
+            // 내비게이션 제목은 환경 로케일을 따르지 않으므로 앱 언어 문자열을 직접 넣는다
+            .navigationTitle(Text(verbatim: library.kind.title))
+            .searchable(text: $searchText, prompt: Text("제목으로 검색"))
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Toggle(isOn: $favoritesOnly) {
                         Image(systemName: favoritesOnly ? "star.fill" : "star")
                     }
                     .toggleStyle(.button)
-                    .accessibilityLabel("즐겨찾기만 보기")
+                    .accessibilityLabel(Text("즐겨찾기만 보기"))
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
@@ -119,7 +122,7 @@ struct ScoreCell: View {
             .contextMenu { ScoreActions(library: library, score: score, onRename: onRename) }
 
             HStack(spacing: 4) {
-                Text(score.title)
+                Text(verbatim: score.title)
                     .font(.callout)
                     .lineLimit(1)
                 Menu {
@@ -130,7 +133,7 @@ struct ScoreCell: View {
                         .frame(width: 32, height: 32)
                         .contentShape(Rectangle())
                 }
-                .accessibilityLabel("\(score.title) 메뉴")
+                .accessibilityLabel(Text("\(score.title) 메뉴"))
             }
             .frame(width: 160)
         }

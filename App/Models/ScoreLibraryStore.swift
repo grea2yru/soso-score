@@ -58,8 +58,8 @@ final class ScoreLibraryStore: ObservableObject {
         case invalidFile(ScoreKind)
         var errorDescription: String? {
             switch self {
-            case .invalidFile(.pdf): return "PDF 파일을 열 수 없습니다."
-            case .invalidFile(.musicXML): return "MusicXML 파일이 아니거나 열 수 없습니다."
+            case .invalidFile(.pdf): return L10n.string("PDF 파일을 열 수 없습니다.")
+            case .invalidFile(.musicXML): return L10n.string("MusicXML 파일이 아니거나 열 수 없습니다.")
             }
         }
     }

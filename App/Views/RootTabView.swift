@@ -5,6 +5,7 @@ import SwiftUI
 struct RootTabView: View {
     @ObservedObject var pdfLibrary: ScoreLibraryStore
     @ObservedObject var xmlLibrary: ScoreLibraryStore
+    @EnvironmentObject private var settings: AppSettings
     @State private var openScore: Score?
 
     var body: some View {
@@ -15,7 +16,7 @@ struct RootTabView: View {
             Tab(ScoreKind.musicXML.title, systemImage: ScoreKind.musicXML.symbolName) {
                 LibraryView(library: xmlLibrary) { openScore = $0 }
             }
-            Tab("설정", systemImage: "gearshape") {
+            Tab(L10n.string("설정"), systemImage: "gearshape") {
                 NavigationStack { SettingsView() }
             }
         }

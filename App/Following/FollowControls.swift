@@ -14,13 +14,13 @@ struct FollowControls: View {
                     .overlay(alignment: .leading) {
                         Capsule().fill(.green).frame(width: 40 * CGFloat(follower.level), height: 6)
                     }
-                    .accessibilityLabel("입력 레벨")
+                    .accessibilityLabel(Text("입력 레벨"))
             }
             Button(action: onToggle) {
                 Image(systemName: follower.isListening ? "ear.fill" : "ear")
             }
             .disabled(!follower.isAvailable)
-            .accessibilityLabel(follower.isListening ? "따라가기 끄기" : "따라가기 켜기")
+            .accessibilityLabel(follower.isListening ? Text("따라가기 끄기") : Text("따라가기 켜기"))
         }
     }
 }

@@ -92,7 +92,7 @@ struct ScoreViewerShell<Content: View, Accessory: View>: View {
             }
         }
         .background(Color(.systemBackground))
-        .navigationTitle(score.title)
+        .navigationTitle(Text(verbatim: score.title))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -103,7 +103,7 @@ struct ScoreViewerShell<Content: View, Accessory: View>: View {
                     Image(systemName: isAnnotating ? "pencil.tip.crop.circle.fill" : "pencil.tip.crop.circle")
                 }
                 .toggleStyle(.button)
-                .accessibilityLabel("필기 모드")
+                .accessibilityLabel(Text("필기 모드"))
             }
             ToolbarItem(placement: .topBarTrailing) {
                 HStack(spacing: 12) {
@@ -111,8 +111,8 @@ struct ScoreViewerShell<Content: View, Accessory: View>: View {
                     Circle()
                         .fill(tracker.isTrackingFace ? Color.green : Color.gray.opacity(0.5))
                         .frame(width: 10, height: 10)
-                        .accessibilityLabel(tracker.isTrackingFace ? "얼굴 추적 중" : "얼굴 미검출")
-                    Text(pageLabel)
+                        .accessibilityLabel(tracker.isTrackingFace ? Text("얼굴 추적 중") : Text("얼굴 미검출"))
+                    Text(verbatim: pageLabel)
                         .font(.callout.monospacedDigit())
                         .foregroundStyle(.secondary)
                 }

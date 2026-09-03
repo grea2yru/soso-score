@@ -9,9 +9,9 @@ enum VerovioError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .notReady: return "악보 엔진이 준비되지 않았습니다."
-        case .loadFailed(let detail): return "악보를 열 수 없습니다. (\(detail))"
-        case .scriptFailed(let detail): return "악보 렌더링 오류: \(detail)"
+        case .notReady: return L10n.string("악보 엔진이 준비되지 않았습니다.")
+        case .loadFailed(let detail): return L10n.format("악보를 열 수 없습니다. (%@)", detail)
+        case .scriptFailed(let detail): return L10n.format("악보 렌더링 오류: %@", detail)
         }
     }
 }
@@ -62,7 +62,7 @@ final class VerovioEngine {
         pageCache = [:]
         let result = try await evaluate("window.vrv.load(\"\(data.base64EncodedString())\", \(isZip))")
         guard let count = result as? Int, count > 0 else {
-            throw VerovioError.loadFailed("조판 실패")
+            throw VerovioError.loadFailed(L10n.string("조판 실패"))
         }
         return count
     }
@@ -70,7 +70,7 @@ final class VerovioEngine {
     func pageSVG(_ index: Int) async throws -> String {
         if let cached = pageCache[index] { return cached }
         guard let svg = try await evaluate("window.vrv.pageSVG(\(index + 1))") as? String else {
-            throw VerovioError.scriptFailed("SVG 없음")
+            throw VerovioError.scriptFailed(L10n.string("SVG 없음"))
         }
         pageCache[index] = svg
         return svg
@@ -78,7 +78,7 @@ final class VerovioEngine {
 
     func timemap() async throws -> Data {
         guard let json = try await evaluate("window.vrv.timemap()") as? String else {
-            throw VerovioError.scriptFailed("타임맵 없음")
+            throw VerovioError.scriptFailed(L10n.string("타임맵 없음"))
         }
         return Data(json.utf8)
     }
@@ -101,14 +101,14 @@ final class VerovioEngine {
             .replacingOccurrences(of: "\\", with: "\\\\")
             .replacingOccurrences(of: "'", with: "\\'")
         guard let json = try await evaluate("window.vrv.pitches('\(escaped)')") as? String else {
-            throw VerovioError.scriptFailed("피치 조회 실패")
+            throw VerovioError.scriptFailed(L10n.string("피치 조회 실패"))
         }
         return try JSONDecoder().decode([String: Int].self, from: Data(json.utf8))
     }
 
     func systemMap(page index: Int) async throws -> PageSystemMap {
         guard let json = try await evaluate("window.vrv.systemMap(\(index + 1))") as? String else {
-            throw VerovioError.scriptFailed("시스템 맵 실패")
+            throw VerovioError.scriptFailed(L10n.string("시스템 맵 실패"))
         }
         return try JSONDecoder().decode(PageSystemMap.self, from: Data(json.utf8))
     }
@@ -116,7 +116,7 @@ final class VerovioEngine {
     func pageWithElement(_ id: String) async throws -> Int {
         let escaped = id.replacingOccurrences(of: "\"", with: "\\\"")
         guard let page = try await evaluate("window.vrv.pageWithElement(\"\(escaped)\")") as? Int else {
-            throw VerovioError.scriptFailed("페이지 조회 실패")
+            throw VerovioError.scriptFailed(L10n.string("페이지 조회 실패"))
         }
         return page - 1
     }
