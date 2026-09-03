@@ -26,8 +26,12 @@ struct PencilCanvasView: UIViewRepresentable {
         context.coordinator.parent = self
 
         if context.coordinator.appliedScale != scale {
-            // 페이지 좌표 → 화면 좌표. 회전 등으로 표시 크기가 바뀔 때만 다시 적용
+            // 페이지 좌표 → 화면 좌표. 회전 등으로 표시 크기가 바뀔 때만 다시 적용.
+            // 프로그램적 설정에도 canvasViewDrawingDidChange가 불리므로, 뷰 업데이트 중
+            // 바인딩(@State)을 되쓰지 않도록 콜백을 잠시 무시한다.
+            context.coordinator.isApplyingProgrammatically = true
             canvas.drawing = drawing.transformed(using: CGAffineTransform(scaleX: scale, y: scale))
+            context.coordinator.isApplyingProgrammatically = false
             context.coordinator.appliedScale = scale
         }
 
@@ -50,10 +54,13 @@ struct PencilCanvasView: UIViewRepresentable {
     final class Coordinator: NSObject, PKCanvasViewDelegate {
         var parent: PencilCanvasView
         var appliedScale: CGFloat = 0
+        /// updateUIView에서 코드로 drawing을 설정하는 동안 true
+        var isApplyingProgrammatically = false
 
         init(_ parent: PencilCanvasView) { self.parent = parent }
 
         func canvasViewDrawingDidChange(_ canvas: PKCanvasView) {
+            guard !isApplyingProgrammatically else { return }
             // 화면 좌표 → 페이지 좌표로 되돌려 저장
             let inverse = CGAffineTransform(scaleX: 1 / parent.scale, y: 1 / parent.scale)
             parent.drawing = canvas.drawing.transformed(using: inverse)
