@@ -16,6 +16,10 @@ struct ScoreApp: App {
                     pdfLibrary.installSamplesIfNeeded(BundledSample.bundled(for: .pdf))
                     xmlLibrary.installSamplesIfNeeded(BundledSample.bundled(for: .musicXML))
                     _ = VerovioEngine.shared   // WASM 초기화를 미리 시작
+                    ScoreTypesetter.shared.schedule(xmlLibrary.scores)   // 캐시 없는 악보를 미리 조판
+                }
+                .onChange(of: xmlLibrary.scores) { _, scores in
+                    ScoreTypesetter.shared.schedule(scores)
                 }
                 .onOpenURL { url in
                     // Files/AirDrop "다음으로 열기": 확장자로 종류 판별

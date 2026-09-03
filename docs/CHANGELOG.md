@@ -2,6 +2,14 @@
 
 SoSo Score(iPad 악보 뷰어)의 기능별 개발 이력입니다. 각 항목의 커밋 번호를 누르면 GitHub에서 해당 변경을 볼 수 있습니다.
 
+## 조판 속도 (2026-09-03)
+
+- 음표 피치 조회를 MEI 한 번 파싱으로 교체 — 음표마다 `getMIDIValuesForElement`를 부르던 제곱 시간 병목 제거(4중주 36~60초 → 수십 ms). `Vendor/verovio/pitch-index.js`, Node 검증 `Vendor/tests/pitch-index.test.js`
+- 페이지 SVG는 문서당 한 번만 렌더 — 시스템 맵이 표시용과 같은 문자열을 재사용
+- 보이는 펼침부터 조판하고 페이지 사이에 표시 요청이 끼어들 수 있게 양보 (`TypesetDocument.buildFollowIndex`)
+- 조판 결과 디스크 캐시(`TypesetCache`, 파일 해시 + 조판 버전 키) — 두 번째부터는 엔진 없이 즉시 열림, 이름 바꿔도 유지, 삭제된 악보의 캐시는 자동 정리
+- 백그라운드 미리 조판(`ScoreTypesetter`) — 가져오기·샘플 설치 직후 캐시 없는 악보를 차례로 조판, 뷰어가 열면 엔진을 양보
+
 ## 배포·브랜딩 (2026-09-03)
 
 - README 추가: 기능 소개, 저장소 구성, 빌드·테스트·설치 방법, 라이선스 고지 — [1dfb194](https://github.com/grea2yru/soso-score/commit/1dfb194)

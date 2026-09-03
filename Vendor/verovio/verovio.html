@@ -1,10 +1,15 @@
 <!DOCTYPE html>
 <html><head><meta charset="utf-8">
 <script src="verovio-toolkit-wasm.js"></script>
+<script src="pitch-index.js"></script>
 </head><body>
 <script>
 window.vrvReady = false;
 let tk = null;
+// 페이지 SVG는 문서당 한 번만 렌더한다 (표시용·시스템 맵용이 같은 문자열을 쓴다)
+let svgCache = {};
+// 음표 id → MIDI 피치 (MEI 한 번 파싱)
+let pitchIndex = null;
 verovio.module.onRuntimeInitialized = () => {
   tk = new verovio.toolkit();
   tk.setOptions({
@@ -20,28 +25,35 @@ function b64ToBytes(b64) {
   for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
   return out;
 }
+function renderPage(n) {
+  if (!(n in svgCache)) svgCache[n] = tk.renderToSVG(n, false);
+  return svgCache[n];
+}
 window.vrv = {
   load: (base64, isZip) => {
+    svgCache = {};
+    pitchIndex = null;
     const bytes = b64ToBytes(base64);
     const ok = isZip ? tk.loadZipDataBuffer(bytes.buffer)
                      : tk.loadData(new TextDecoder("utf-8").decode(bytes));
     if (!ok) return -1;
     return tk.getPageCount();
   },
-  pageSVG: (n) => tk.renderToSVG(n, false),
+  pageSVG: (n) => renderPage(n),
   timemap: () => JSON.stringify(tk.renderToTimemap({ includeMeasures: true, includeRests: false })),
   midi: (id) => JSON.stringify(tk.getMIDIValuesForElement(id)),
   pageWithElement: (id) => tk.getPageWithElement(id),
   pitches: (idsJson) => {
+    if (!pitchIndex) pitchIndex = PitchIndex.pitchIndexFromMEI(tk.getMEI({ removeIds: false }));
     const out = {};
     JSON.parse(idsJson).forEach(id => {
-      const v = tk.getMIDIValuesForElement(id);
-      if (v && v.pitch > 0) out[id] = v.pitch;
+      const p = PitchIndex.lookupPitch(pitchIndex, id);
+      if (p !== undefined && p > 0) out[id] = p;
     });
     return JSON.stringify(out);
   },
   systemMap: (n) => {
-    const doc = new DOMParser().parseFromString(tk.renderToSVG(n, false), "image/svg+xml");
+    const doc = new DOMParser().parseFromString(renderPage(n), "image/svg+xml");
     const systems = Array.from(doc.querySelectorAll("g.system"));
     const notes = {}, measures = {};
     systems.forEach((sys, i) => {

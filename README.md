@@ -70,6 +70,11 @@ xcodebuild -project SoSoScore.xcodeproj -scheme SoSoScore -destination 'platform
 ```
 
 패키지 단위 테스트는 각 패키지 폴더에서 `swift test`로 실행할 수 있습니다.
+Verovio 브리지의 피치 파서는 Node로 검증합니다 (샘플 악보 전 음표를 Verovio 기준값과 대조).
+
+```bash
+node Vendor/tests/pitch-index.test.js
+```
 
 ```bash
 cd Packages/GestureCore && swift test

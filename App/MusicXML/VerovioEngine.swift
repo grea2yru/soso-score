@@ -16,8 +16,16 @@ enum VerovioError: LocalizedError {
     }
 }
 
+/// 페이지 안의 시스템(줄) 구성: 음표/마디 id → 시스템 순번
+struct PageSystemMap: Codable, Sendable {
+    let count: Int
+    let notes: [String: Int]
+    let measures: [String: Int]
+}
+
 /// Verovio(WASM)를 숨김 WKWebView에 올려 MusicXML을 A4 비율 고정 가상 페이지로 조판한다.
 /// 한 번에 악보 하나만 열려 있으며, 페이지 SVG는 메모리에 캐시한다.
+/// 여러 곳에서 동시에 쓰면 문서가 뒤바뀌므로 독점 사용은 `ScoreTypesetter`가 조정한다.
 @MainActor
 final class VerovioEngine {
     static let shared = VerovioEngine()
@@ -76,6 +84,11 @@ final class VerovioEngine {
         return svg
     }
 
+    /// 메모리의 페이지 SVG를 비운다 (문서를 다 쓴 뒤 메모리 회수)
+    func clearPageCache() {
+        pageCache = [:]
+    }
+
     func timemap() async throws -> Data {
         guard let json = try await evaluate("window.vrv.timemap()") as? String else {
             throw VerovioError.scriptFailed(L10n.string("타임맵 없음"))
@@ -83,18 +96,11 @@ final class VerovioEngine {
         return Data(json.utf8)
     }
 
-    /// 페이지 안의 시스템(줄) 구성: 음표/마디 id → 시스템 순번
-    struct PageSystemMap: Decodable {
-        let count: Int
-        let notes: [String: Int]
-        let measures: [String: Int]
-    }
-
     func timemapEntries() async throws -> [TimemapEntry] {
         try JSONDecoder().decode([TimemapEntry].self, from: try await timemap())
     }
 
-    /// 음표 id → MIDI 피치 (한 번의 JS 호출)
+    /// 음표 id → MIDI 피치. JS 쪽에서 MEI를 한 번 파싱해 만든 표를 조회한다 (한 번의 JS 호출)
     func pitches(for ids: [String]) async throws -> [String: Int] {
         let idsJSON = String(data: try JSONSerialization.data(withJSONObject: ids), encoding: .utf8) ?? "[]"
         let escaped = idsJSON

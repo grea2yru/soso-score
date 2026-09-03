@@ -7,20 +7,7 @@ enum MusicXMLPage {
     static let size = CGSize(width: 595, height: 842)
 }
 
-/// 음표가 놓인 페이지와 그 페이지 안의 시스템(줄) 순번
-struct NoteLocation: Equatable {
-    let page: Int
-    let system: Int
-}
-
-/// 따라가기에 필요한 조판 인덱스
-struct ScoreLayoutIndex {
-    var noteLocation: [String: NoteLocation] = [:]
-    var systemCounts: [Int: Int] = [:]
-    var measureFirstEvent: [String: Int] = [:]
-}
-
-/// Verovio 엔진으로 MusicXML을 조판해 ScoreViewerShell에 페이지 SVG를 공급하고,
+/// ScoreTypesetter로 MusicXML 조판 결과(캐시 또는 실시간)를 받아 ScoreViewerShell에 페이지 SVG를 공급하고,
 /// 오디오 따라가기(하이라이트·자동 넘김·탭 재지정)를 연동한다.
 struct MusicXMLScoreViewer: View {
     let score: Score
@@ -28,6 +15,7 @@ struct MusicXMLScoreViewer: View {
     @StateObject private var cursor = PageCursor()
     @StateObject private var follower = ScoreFollower()
     @Environment(\.scenePhase) private var scenePhase
+    @State private var document: TypesetDocument?
     @State private var pageCount: Int?
     @State private var errorMessage: String?
     @State private var svgs: [Int: String] = [:]
@@ -50,6 +38,7 @@ struct MusicXMLScoreViewer: View {
                     SVGPage(
                         index: index,
                         svgs: $svgs,
+                        loadSVG: { index in try? await document?.pageSVG(index) },
                         highlightIDs: highlightIDs(for: index),
                         controller: controllers[index],
                         onTapNormalized: follower.isListening ? { x, y in relocate(page: index, x: x, y: y) } : nil
@@ -79,41 +68,31 @@ struct MusicXMLScoreViewer: View {
         .onChange(of: scenePhase) { _, phase in
             if phase != .active { follower.stop() }
         }
-        .onDisappear { follower.stop() }
+        .onDisappear {
+            follower.stop()
+            document?.close()
+        }
     }
 
     // MARK: 로딩
 
     private func load() async {
+        document?.close()
+        document = nil
         do {
             svgs = [:]
             layout = ScoreLayoutIndex()
             lastAutoTurnedFrom = nil
-            let count = try await VerovioEngine.shared.load(fileURL: score.url)
-            controllers = Dictionary(uniqueKeysWithValues: (0..<count).map { ($0, SVGPageController()) })
-            pageCount = count
+            let doc = try await ScoreTypesetter.shared.open(fileURL: score.url)
+            guard !Task.isCancelled else { return doc.close() }
+            document = doc
+            controllers = Dictionary(uniqueKeysWithValues: (0..<doc.pageCount).map { ($0, SVGPageController()) })
+            pageCount = doc.pageCount
 
-            // 따라가기 준비 — 실패해도 뷰어 자체는 동작한다
-            let entries = try await VerovioEngine.shared.timemapEntries()
-            let ids = Array(Set(entries.flatMap { $0.on ?? [] }))
-            let pitches = try await VerovioEngine.shared.pitches(for: ids)
-            let events = ScoreTemplateBuilder.events(from: entries, pitches: pitches)
-
-            var index = ScoreLayoutIndex()
-            for page in 0..<count {
-                let map = try await VerovioEngine.shared.systemMap(page: page)
-                index.systemCounts[page] = map.count
-                for (id, system) in map.notes {
-                    index.noteLocation[id] = NoteLocation(page: page, system: system)
-                }
-            }
-            for event in events {
-                if let measure = event.measureID, index.measureFirstEvent[measure] == nil {
-                    index.measureFirstEvent[measure] = event.index
-                }
-            }
-            layout = index
-            follower.configure(events: events)
+            // 따라가기 준비 — 보이는 펼침부터 조판하며, 실패해도 뷰어 자체는 동작한다
+            let index = try await doc.buildFollowIndex(priorityPages: { [cursor] in cursor.visibleIndices })
+            layout = index.layout
+            follower.configure(events: index.events)
         } catch {
             if pageCount == nil { errorMessage = error.localizedDescription }
         }
@@ -168,10 +147,11 @@ struct MusicXMLScoreViewer: View {
     }
 }
 
-/// 페이지 SVG를 필요할 때 엔진에서 받아와 표시하고, 따라가기 중에는 탭 위치를 정규화해 전달한다.
+/// 페이지 SVG를 필요할 때 문서에서 받아와 표시하고, 따라가기 중에는 탭 위치를 정규화해 전달한다.
 private struct SVGPage: View {
     let index: Int
     @Binding var svgs: [Int: String]
+    let loadSVG: (Int) async -> String?
     let highlightIDs: [String]
     let controller: SVGPageController?
     let onTapNormalized: ((CGFloat, CGFloat) -> Void)?
@@ -196,7 +176,7 @@ private struct SVGPage: View {
         }
         .task(id: index) {
             guard svgs[index] == nil else { return }
-            if let svg = try? await VerovioEngine.shared.pageSVG(index) {
+            if let svg = await loadSVG(index) {
                 svgs[index] = svg
             }
         }
