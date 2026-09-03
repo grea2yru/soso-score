@@ -11,7 +11,7 @@ struct ScoreApp: App {
                 .environmentObject(library)
                 .environmentObject(settings)
                 .onAppear {
-                    library.installSamplesIfNeeded(BundledSample.bundled)
+                    library.installSamplesIfNeeded(BundledSample.bundled(for: .pdf))
                 }
         }
     }

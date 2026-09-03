@@ -81,7 +81,7 @@ struct LibraryView: View {
             ) { result in
                 guard case .success(let urls) = result else { return }
                 for url in urls {
-                    do { try library.importPDF(from: url) }
+                    do { try library.importFile(from: url) }
                     catch { importError = error.localizedDescription }
                 }
             }
@@ -101,7 +101,7 @@ struct LibraryView: View {
         }
         .onOpenURL { url in
             // Files/AirDrop의 "다음으로 열기"로 전달된 PDF
-            try? library.importPDF(from: url)
+            try? library.importFile(from: url)
         }
     }
 

@@ -45,7 +45,7 @@ final class ScoreLibraryStoreTests: XCTestCase {
 
     func testImportAddsScore() throws {
         let store = makeStore()
-        try store.importPDF(from: try makePDF(named: "쇼팽 녹턴"))
+        try store.importFile(from: try makePDF(named: "쇼팽 녹턴"))
         XCTAssertEqual(store.scores.map(\.title), ["쇼팽 녹턴"])
     }
 
@@ -53,20 +53,20 @@ final class ScoreLibraryStoreTests: XCTestCase {
         let bad = sourceDir.appendingPathComponent("broken.pdf")
         try Data("not a pdf".utf8).write(to: bad)
         let store = makeStore()
-        XCTAssertThrowsError(try store.importPDF(from: bad))
+        XCTAssertThrowsError(try store.importFile(from: bad))
         XCTAssertTrue(store.scores.isEmpty)
     }
 
     func testImportDuplicateNameGetsSuffix() throws {
         let store = makeStore()
-        try store.importPDF(from: try makePDF(named: "연습곡"))
-        try store.importPDF(from: try makePDF(named: "연습곡"))
+        try store.importFile(from: try makePDF(named: "연습곡"))
+        try store.importFile(from: try makePDF(named: "연습곡"))
         XCTAssertEqual(store.scores.map(\.title).sorted(), ["연습곡", "연습곡 2"])
     }
 
     func testDeleteRemovesScoreAndLastPage() throws {
         let store = makeStore()
-        try store.importPDF(from: try makePDF(named: "소나타"))
+        try store.importFile(from: try makePDF(named: "소나타"))
         let score = store.scores[0]
         store.setLastPage(5, of: score)
         store.delete(score)
@@ -76,7 +76,7 @@ final class ScoreLibraryStoreTests: XCTestCase {
 
     func testRenamePreservesLastPage() throws {
         let store = makeStore()
-        try store.importPDF(from: try makePDF(named: "옛이름"))
+        try store.importFile(from: try makePDF(named: "옛이름"))
         store.setLastPage(7, of: store.scores[0])
         store.rename(store.scores[0], to: "새이름")
         XCTAssertEqual(store.scores.map(\.title), ["새이름"])
@@ -85,7 +85,7 @@ final class ScoreLibraryStoreTests: XCTestCase {
 
     func testLastPageDefaultsToZero() throws {
         let store = makeStore()
-        try store.importPDF(from: try makePDF(named: "새 악보"))
+        try store.importFile(from: try makePDF(named: "새 악보"))
         XCTAssertEqual(store.lastPage(of: store.scores[0]), 0)
     }
 
@@ -121,7 +121,7 @@ final class ScoreLibraryStoreTests: XCTestCase {
 
     func testToggleFavoritePersistsAcrossInstances() throws {
         let store = makeStore()
-        try store.importPDF(from: try makePDF(named: "녹턴"))
+        try store.importFile(from: try makePDF(named: "녹턴"))
         store.toggleFavorite(store.scores[0])
         XCTAssertTrue(store.isFavorite(store.scores[0]))
 
@@ -133,7 +133,7 @@ final class ScoreLibraryStoreTests: XCTestCase {
 
     func testRenameKeepsFavorite() throws {
         let store = makeStore()
-        try store.importPDF(from: try makePDF(named: "옛이름"))
+        try store.importFile(from: try makePDF(named: "옛이름"))
         store.toggleFavorite(store.scores[0])
         store.rename(store.scores[0], to: "새이름")
         XCTAssertTrue(store.isFavorite(store.scores[0]))
@@ -142,7 +142,7 @@ final class ScoreLibraryStoreTests: XCTestCase {
 
     func testDeleteClearsFavorite() throws {
         let store = makeStore()
-        try store.importPDF(from: try makePDF(named: "지울곡"))
+        try store.importFile(from: try makePDF(named: "지울곡"))
         store.toggleFavorite(store.scores[0])
         store.delete(store.scores[0])
         XCTAssertTrue(store.favoriteIDs.isEmpty)
@@ -152,7 +152,7 @@ final class ScoreLibraryStoreTests: XCTestCase {
 
     func testRenameAndDeleteCarryAnnotations() throws {
         let store = makeStore()
-        try store.importPDF(from: try makePDF(named: "옛이름"))
+        try store.importFile(from: try makePDF(named: "옛이름"))
         let ink = PKInk(.pen, color: .black)
         let point = PKStrokePoint(location: .zero, timeOffset: 0, size: CGSize(width: 3, height: 3),
                                   opacity: 1, force: 1, azimuth: 0, altitude: .pi / 2)
@@ -170,9 +170,9 @@ final class ScoreLibraryStoreTests: XCTestCase {
 
     func testFilterByTitleIsCaseInsensitivePartialMatch() throws {
         let store = makeStore()
-        try store.importPDF(from: try makePDF(named: "Clair de Lune"))
-        try store.importPDF(from: try makePDF(named: "월광 소나타"))
-        try store.importPDF(from: try makePDF(named: "녹턴"))
+        try store.importFile(from: try makePDF(named: "Clair de Lune"))
+        try store.importFile(from: try makePDF(named: "월광 소나타"))
+        try store.importFile(from: try makePDF(named: "녹턴"))
         XCTAssertEqual(store.filteredScores(query: "lune", favoritesOnly: false).map(\.title), ["Clair de Lune"])
         XCTAssertEqual(store.filteredScores(query: "소나타", favoritesOnly: false).map(\.title), ["월광 소나타"])
         XCTAssertEqual(store.filteredScores(query: "  ", favoritesOnly: false).count, 3)
@@ -180,18 +180,73 @@ final class ScoreLibraryStoreTests: XCTestCase {
 
     func testFavoritesOnlyFilterAndFavoritesSortFirst() throws {
         let store = makeStore()
-        try store.importPDF(from: try makePDF(named: "가"))
-        try store.importPDF(from: try makePDF(named: "나"))
-        try store.importPDF(from: try makePDF(named: "다"))
+        try store.importFile(from: try makePDF(named: "가"))
+        try store.importFile(from: try makePDF(named: "나"))
+        try store.importFile(from: try makePDF(named: "다"))
         let na = store.scores.first { $0.title == "나" }!
         store.toggleFavorite(na)
         XCTAssertEqual(store.filteredScores(query: "", favoritesOnly: true).map(\.title), ["나"])
         XCTAssertEqual(store.filteredScores(query: "", favoritesOnly: false).map(\.title), ["나", "가", "다"])
     }
 
+    // MARK: MusicXML 종류
+
+    func makeXMLStore() -> ScoreLibraryStore {
+        ScoreLibraryStore(kind: .musicXML, directory: tempDir, defaults: defaults)
+    }
+
+    func makeMusicXML(named name: String) throws -> URL {
+        let url = sourceDir.appendingPathComponent("\(name).musicxml")
+        try Data("<?xml version=\"1.0\"?><score-partwise version=\"3.1\"><part-list/></score-partwise>".utf8).write(to: url)
+        return url
+    }
+
+    func testMusicXMLStoreUsesSubdirectoryAndKeepsExtension() throws {
+        let store = makeXMLStore()
+        try store.importFile(from: try makeMusicXML(named: "인벤션 1번"))
+        XCTAssertEqual(store.scores.map(\.title), ["인벤션 1번"])
+        XCTAssertEqual(store.scores[0].kind, .musicXML)
+        XCTAssertEqual(store.scores[0].url.pathExtension, "musicxml")
+        XCTAssertEqual(store.scores[0].url.deletingLastPathComponent().lastPathComponent, "MusicXML")
+    }
+
+    func testMusicXMLStoreRejectsPDFAndInvalidXML() throws {
+        let store = makeXMLStore()
+        XCTAssertThrowsError(try store.importFile(from: try makePDF(named: "pdf파일")))
+        let bad = sourceDir.appendingPathComponent("bad.musicxml")
+        try Data("<html/>".utf8).write(to: bad)
+        XCTAssertThrowsError(try store.importFile(from: bad))
+        XCTAssertTrue(store.scores.isEmpty)
+    }
+
+    func testFavoritesAreSeparatedByKind() throws {
+        let pdfStore = makeStore()
+        let xmlStore = makeXMLStore()
+        try pdfStore.importFile(from: try makePDF(named: "같은이름"))
+        try xmlStore.importFile(from: try makeMusicXML(named: "같은이름"))
+        pdfStore.toggleFavorite(pdfStore.scores[0])
+        XCTAssertFalse(xmlStore.isFavorite(xmlStore.scores[0]))
+    }
+
+    func testLastPageIsSeparatedByKind() throws {
+        let pdfStore = makeStore()
+        let xmlStore = makeXMLStore()
+        try pdfStore.importFile(from: try makePDF(named: "곡"))
+        try xmlStore.importFile(from: try makeMusicXML(named: "곡"))
+        pdfStore.setLastPage(3, of: pdfStore.scores[0])
+        XCTAssertEqual(xmlStore.lastPage(of: xmlStore.scores[0]), 0)
+    }
+
+    func testRenameKeepsOriginalExtension() throws {
+        let store = makeXMLStore()
+        try store.importFile(from: try makeMusicXML(named: "옛"))
+        store.rename(store.scores[0], to: "새")
+        XCTAssertEqual(store.scores[0].id, "새.musicxml")
+    }
+
     func testThumbnailReturnsImage() throws {
         let store = makeStore()
-        try store.importPDF(from: try makePDF(named: "썸네일"))
+        try store.importFile(from: try makePDF(named: "썸네일"))
         XCTAssertNotNil(store.thumbnail(for: store.scores[0], size: CGSize(width: 160, height: 220)))
     }
 }

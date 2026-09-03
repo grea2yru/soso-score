@@ -3,9 +3,10 @@ import PDFKit
 import UIKit
 
 struct Score: Identifiable, Hashable {
-    /// 파일명 (확장자 포함) — 디렉토리 내에서 유일
+    /// 파일명 (확장자 포함) — 같은 종류의 폴더 안에서 유일
     let id: String
     let url: URL
+    let kind: ScoreKind
     var title: String { (id as NSString).deletingPathExtension }
 }
 
@@ -14,37 +15,49 @@ struct BundledSample {
     let url: URL
     let title: String
 
-    static var bundled: [BundledSample] {
-        guard let url = Bundle.main.url(forResource: "debussy-clair-de-lune", withExtension: "pdf") else {
-            return []
+    static func bundled(for kind: ScoreKind) -> [BundledSample] {
+        switch kind {
+        case .pdf:
+            guard let url = Bundle.main.url(forResource: "debussy-clair-de-lune", withExtension: "pdf") else { return [] }
+            return [BundledSample(url: url, title: "드뷔시 - 달빛 (Clair de Lune)")]
+        case .musicXML:
+            guard let url = Bundle.main.url(forResource: "bach-bwv846", withExtension: "mxl") else { return [] }
+            return [BundledSample(url: url, title: "바흐 - 평균율 1권 전주곡 C장조 (BWV 846)")]
         }
-        return [BundledSample(url: url, title: "드뷔시 - 달빛 (Clair de Lune)")]
     }
 }
 
 @MainActor
 final class ScoreLibraryStore: ObservableObject {
     enum LibraryError: LocalizedError {
-        case invalidPDF
-        var errorDescription: String? { "PDF 파일을 열 수 없습니다." }
+        case invalidFile(ScoreKind)
+        var errorDescription: String? {
+            switch self {
+            case .invalidFile(.pdf): return "PDF 파일을 열 수 없습니다."
+            case .invalidFile(.musicXML): return "MusicXML 파일이 아니거나 열 수 없습니다."
+            }
+        }
     }
 
+    let kind: ScoreKind
     @Published private(set) var scores: [Score] = []
     /// 즐겨찾기된 악보의 id(파일명) 집합
     @Published private(set) var favoriteIDs: Set<String> = []
 
-    /// 악보별 필기 저장소 (Documents/Annotations)
+    /// 악보별 필기 저장소 (종류 폴더/Annotations)
     let annotations: AnnotationStore
 
     private let directory: URL
     private let defaults: UserDefaults
 
-    init(directory: URL? = nil, defaults: UserDefaults = .standard) {
-        self.directory = directory
-            ?? FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+    init(kind: ScoreKind = .pdf, directory: URL? = nil, defaults: UserDefaults = .standard) {
+        self.kind = kind
+        let base = directory ?? FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        self.directory = kind.subdirectory.map { base.appendingPathComponent($0, isDirectory: true) } ?? base
         self.defaults = defaults
         self.annotations = AnnotationStore(directory: self.directory.appendingPathComponent("Annotations", isDirectory: true))
-        favoriteIDs = Set(defaults.stringArray(forKey: Self.favoritesKey) ?? [])
+        try? FileManager.default.createDirectory(at: self.directory, withIntermediateDirectories: true)
+        favoriteIDs = Set(defaults.stringArray(forKey: kind.favoritesKey) ?? [])
         reload()
     }
 
@@ -74,30 +87,33 @@ final class ScoreLibraryStore: ObservableObject {
     }
 
     private func saveFavorites() {
-        defaults.set(Array(favoriteIDs).sorted(), forKey: Self.favoritesKey)
+        defaults.set(Array(favoriteIDs).sorted(), forKey: kind.favoritesKey)
     }
+
+    // MARK: 파일 관리
 
     func reload() {
         let files = (try? FileManager.default.contentsOfDirectory(
             at: directory, includingPropertiesForKeys: nil)) ?? []
         scores = files
-            .filter { $0.pathExtension.lowercased() == "pdf" }
+            .filter { kind.allowedExtensions.contains($0.pathExtension.lowercased()) }
             .sorted { $0.lastPathComponent.localizedStandardCompare($1.lastPathComponent) == .orderedAscending }
-            .map { Score(id: $0.lastPathComponent, url: $0) }
+            .map { Score(id: $0.lastPathComponent, url: $0, kind: kind) }
     }
 
-    func importPDF(from source: URL) throws {
+    func importFile(from source: URL) throws {
         // Files 앱 등 외부에서 온 URL은 보안 스코프 접근이 필요할 수 있다
         let accessing = source.startAccessingSecurityScopedResource()
         defer { if accessing { source.stopAccessingSecurityScopedResource() } }
 
-        guard PDFDocument(url: source) != nil else { throw LibraryError.invalidPDF }
+        guard kind.validate(fileAt: source) else { throw LibraryError.invalidFile(kind) }
 
+        let ext = source.pathExtension.lowercased()
         let base = source.deletingPathExtension().lastPathComponent
-        var dest = directory.appendingPathComponent("\(base).pdf")
+        var dest = directory.appendingPathComponent("\(base).\(ext)")
         var counter = 2
         while FileManager.default.fileExists(atPath: dest.path) {
-            dest = directory.appendingPathComponent("\(base) \(counter).pdf")
+            dest = directory.appendingPathComponent("\(base) \(counter).\(ext)")
             counter += 1
         }
         try FileManager.default.copyItem(at: source, to: dest)
@@ -106,13 +122,13 @@ final class ScoreLibraryStore: ObservableObject {
 
     /// 최초 1회만 샘플을 보관함에 복사한다. 사용자가 지운 샘플은 다시 설치하지 않는다.
     func installSamplesIfNeeded(_ samples: [BundledSample]) {
-        guard !defaults.bool(forKey: Self.samplesInstalledKey) else { return }
+        guard !defaults.bool(forKey: kind.samplesInstalledKey) else { return }
         for sample in samples {
-            let dest = directory.appendingPathComponent("\(sample.title).pdf")
+            let dest = directory.appendingPathComponent("\(sample.title).\(sample.url.pathExtension)")
             guard !FileManager.default.fileExists(atPath: dest.path) else { continue }
             try? FileManager.default.copyItem(at: sample.url, to: dest)
         }
-        defaults.set(true, forKey: Self.samplesInstalledKey)
+        defaults.set(true, forKey: kind.samplesInstalledKey)
         reload()
     }
 
@@ -127,7 +143,7 @@ final class ScoreLibraryStore: ObservableObject {
     func rename(_ score: Score, to newTitle: String) {
         let trimmed = newTitle.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { return }
-        let dest = directory.appendingPathComponent("\(trimmed).pdf")
+        let dest = directory.appendingPathComponent("\(trimmed).\(score.url.pathExtension)")
         guard !FileManager.default.fileExists(atPath: dest.path) else { return }
         do {
             try FileManager.default.moveItem(at: score.url, to: dest)
@@ -151,12 +167,11 @@ final class ScoreLibraryStore: ObservableObject {
         defaults.set(page, forKey: lastPageKey(score.id))
     }
 
+    /// PDF만 첫 페이지 썸네일을 만든다. 디지털 악보는 아이콘으로 표시.
     func thumbnail(for score: Score, size: CGSize) -> UIImage? {
-        PDFDocument(url: score.url)?.page(at: 0)?.thumbnail(of: size, for: .mediaBox)
+        guard kind == .pdf else { return nil }
+        return PDFDocument(url: score.url)?.page(at: 0)?.thumbnail(of: size, for: .mediaBox)
     }
 
-    private static let samplesInstalledKey = "didInstallSamples"
-    private static let favoritesKey = "favoriteScoreIDs"
-
-    private func lastPageKey(_ id: String) -> String { "lastPage.\(id)" }
+    private func lastPageKey(_ id: String) -> String { "\(kind.lastPageKeyPrefix)\(id)" }
 }
