@@ -33,6 +33,7 @@ SoSo Score(iPad 악보 뷰어)의 기능별 개발 이력입니다. 각 항목�
 
 ## 샘플 악보
 
+- 번들에서 빠진 옛 샘플(1~2장짜리 등)은 앱이 설치했던 것만 필기·즐겨찾기와 함께 자동 정리 — 사용자가 직접 가져온 같은 이름의 파일은 유지
 - 샘플 전면 교체: 4페이지 이상의 대중적인 곡으로 PDF 10곡(Mutopia)·MusicXML 10곡(OpenScore CC0, music21 corpus) 재구성. 드뷔시 「달빛」은 PDF와 MusicXML 모두 수록 — MusicXML은 Mutopia LilyPond 소스를 `Samples/tools/`로 직접 변환 — [fdb986f](https://github.com/grea2yru/soso-score/commit/fdb986f)
 - PDF 10곡(Mutopia), MusicXML 10곡(music21 corpus), 샘플별 설치 기록 — [1dfb194](https://github.com/grea2yru/soso-score/commit/1dfb194)
 - 최초 실행 시 기본 샘플(드뷔시 달빛) 설치 — [1dfb194](https://github.com/grea2yru/soso-score/commit/1dfb194)

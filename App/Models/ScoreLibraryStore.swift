@@ -24,6 +24,41 @@ struct BundledSample {
         }
     }
 
+    /// 예전 버전에 번들됐다가 빠진 샘플 (제목·확장자). 앱이 설치했던 것만 보관함에서 정리한다.
+    struct Retired: Hashable {
+        let title: String
+        let ext: String
+    }
+
+    static func retired(for kind: ScoreKind) -> [Retired] {
+        switch kind {
+        case .pdf:
+            return [
+                "쇼팽 - 녹턴 Op.9 No.2",
+                "쇼팽 - 연습곡 Op.10 No.12 「혁명」",
+                "쇼팽 - 연습곡 Op.10 No.5 「흑건」",
+                "사티 - 그노시엔 1번",
+                "모차르트 - 피아노 소나타 K.309 1악장",
+                "베토벤 - 피아노 소나타 1번 Op.2 No.1 1악장",
+                "베토벤 - 피아노 소나타 6번 Op.10 No.2 1악장",
+                "슈만 - 어린이 정경 1번 「미지의 나라들」",
+                "슈만 - 어린이 정경 7번 「트로이메라이」",
+            ].map { Retired(title: $0, ext: "pdf") }
+        case .musicXML:
+            return [
+                "바흐 - 평균율 1권 전주곡 C장조 (BWV 846)",
+                "모차르트 - 피아노 소나타 K.545 1악장 (제시부)",
+                "조플린 - 메이플 리프 래그",
+                "클라라 슈만 - 폴로네즈 Op.1 No.1",
+                "클라라 슈만 - 폴로네즈 Op.1 No.2",
+                "클라라 슈만 - 폴로네즈 Op.1 No.3",
+                "바흐 - 코랄 「예수, 나의 기쁨」 (BWV 227-1)",
+                "바흐 - 코랄 「오 피와 상처로 가득한 머리」 (BWV 244-54)",
+                "바흐 - 코랄 「내 마음의 깊은 곳에서」 (BWV 269)",
+            ].map { Retired(title: $0, ext: "mxl") }
+        }
+    }
+
     private static func sample(_ resource: String, _ ext: String, _ title: String) -> BundledSample? {
         Bundle.main.url(forResource: resource, withExtension: ext).map { BundledSample(url: $0, title: title) }
     }
@@ -155,13 +190,23 @@ final class ScoreLibraryStore: ObservableObject {
 
     /// 아직 설치한 적 없는 샘플만 보관함에 복사한다. 사용자가 지운 샘플은 다시 설치하지 않으며,
     /// 나중에 추가된 샘플은 기존 사용자에게도 설치된다.
-    func installSamplesIfNeeded(_ samples: [BundledSample]) {
+    /// 번들에서 빠진 샘플(`retired`)은 앱이 설치했던 것(설치 기록에 있는 것)만 필기·즐겨찾기와 함께 지운다.
+    /// 사용자가 같은 이름으로 직접 가져온 파일은 설치 기록에 없으므로 남는다.
+    func installSamplesIfNeeded(_ samples: [BundledSample], removingRetired retired: [BundledSample.Retired]? = nil) {
         var installed = Set(defaults.stringArray(forKey: kind.installedSamplesKey) ?? [])
         // 이전 버전(불리언 플래그) 호환: 목록이 없고 플래그만 있으면 그 시절의 샘플은 이미 설치된 것으로 본다
         if installed.isEmpty, defaults.bool(forKey: kind.samplesInstalledKey) {
             installed.insert(BundledSample.legacyTitle(for: kind))
         }
         var changed = false
+        for old in retired ?? BundledSample.retired(for: kind) where installed.contains(old.title) {
+            let url = directory.appendingPathComponent("\(old.title).\(old.ext)")
+            if FileManager.default.fileExists(atPath: url.path) {
+                delete(Score(id: url.lastPathComponent, url: url, kind: kind))
+            }
+            installed.remove(old.title)
+            changed = true
+        }
         for sample in samples where !installed.contains(sample.title) {
             let dest = directory.appendingPathComponent("\(sample.title).\(sample.url.pathExtension)")
             if !FileManager.default.fileExists(atPath: dest.path) {

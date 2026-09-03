@@ -127,6 +127,41 @@ final class ScoreLibraryStoreTests: XCTestCase {
         XCTAssertEqual(store.scores.map(\.title), ["나중 샘플"])
     }
 
+    func testRetiredSampleInstalledByAppIsRemovedWithItsRecords() throws {
+        let store = makeStore()
+        let old = BundledSample(url: try makePDF(named: "old"), title: "옛 샘플")
+        store.installSamplesIfNeeded([old], removingRetired: [])
+        let oldScore = try XCTUnwrap(store.scores.first)
+        store.toggleFavorite(oldScore)
+        store.setLastPage(2, of: oldScore)
+
+        let new = BundledSample(url: try makePDF(named: "new"), title: "새 샘플")
+        store.installSamplesIfNeeded([new], removingRetired: [.init(title: "옛 샘플", ext: "pdf")])
+
+        XCTAssertEqual(store.scores.map(\.title), ["새 샘플"])
+        XCTAssertFalse(store.favoriteIDs.contains(oldScore.id))
+        XCTAssertEqual(store.lastPage(of: oldScore), 0)
+        XCTAssertEqual(defaults.stringArray(forKey: ScoreKind.pdf.installedSamplesKey), ["새 샘플"])
+    }
+
+    func testRetiredTitleImportedByUserIsKept() throws {
+        let store = makeStore()
+        try store.importFile(from: try makePDF(named: "옛 샘플"))   // 사용자가 직접 가져온 같은 이름의 파일
+        let new = BundledSample(url: try makePDF(named: "new"), title: "새 샘플")
+        store.installSamplesIfNeeded([new], removingRetired: [.init(title: "옛 샘플", ext: "pdf")])
+        XCTAssertEqual(store.scores.map(\.title).sorted(), ["새 샘플", "옛 샘플"])
+    }
+
+    func testRetiredSampleIsNotReinstalledLater() throws {
+        let store = makeStore()
+        let old = BundledSample(url: try makePDF(named: "old"), title: "옛 샘플")
+        store.installSamplesIfNeeded([old], removingRetired: [])
+        let retired = [BundledSample.Retired(title: "옛 샘플", ext: "pdf")]
+        store.installSamplesIfNeeded([], removingRetired: retired)
+        store.installSamplesIfNeeded([old], removingRetired: retired)   // 목록에 다시 나타나도 재설치·재삭제 없음
+        XCTAssertEqual(store.scores.map(\.title), ["옛 샘플"])
+    }
+
     func testLegacyBooleanFlagTreatsFirstSampleAsInstalled() throws {
         defaults.set(true, forKey: ScoreKind.pdf.samplesInstalledKey)   // 구버전 상태
         let store = makeStore()
