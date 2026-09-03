@@ -89,7 +89,7 @@ swiftc -O -o /tmp/drawicon Design/DrawAppIcon.swift && /tmp/drawicon App/Assets.
 
 ## 개발 이력
 
-기능별 변경 내역과 커밋 링크는 [CHANGELOG.md](CHANGELOG.md)에 있습니다.
+기능별 변경 내역과 커밋 링크는 [docs/CHANGELOG.md](docs/CHANGELOG.md)에 있습니다.
 
 ## 라이선스 고지
 
