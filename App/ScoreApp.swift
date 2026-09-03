@@ -7,8 +7,7 @@ struct ScoreApp: App {
 
     var body: some Scene {
         WindowGroup {
-            LibraryView()
-                .environmentObject(library)
+            LibraryView(library: library)
                 .environmentObject(settings)
                 .onAppear {
                     library.installSamplesIfNeeded(BundledSample.bundled(for: .pdf))

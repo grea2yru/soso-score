@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct LibraryView: View {
-    @EnvironmentObject var library: ScoreLibraryStore
+    @ObservedObject var library: ScoreLibraryStore
     @State private var showImporter = false
     @State private var importError: String?
     @State private var renamingScore: Score?
@@ -40,7 +40,7 @@ struct LibraryView: View {
                 } else {
                     LazyVGrid(columns: columns, spacing: 24) {
                         ForEach(visibleScores) { score in
-                            ScoreCell(score: score, onRename: { beginRename(score) })
+                            ScoreCell(library: library, score: score, onRename: { beginRename(score) })
                         }
                     }
                     .padding()
@@ -49,7 +49,7 @@ struct LibraryView: View {
             .navigationTitle("악보 보관함")
             .searchable(text: $searchText, prompt: "제목으로 검색")
             .navigationDestination(for: Score.self) { score in
-                ScoreViewerView(score: score)
+                PDFScoreViewer(score: score, library: library)
             }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -114,7 +114,7 @@ struct LibraryView: View {
 /// 악보 카드. 썸네일은 뷰어로 이동하는 링크, 제목 옆 ⋯ 메뉴는 링크 바깥에 두어
 /// 탭이 링크에 가로채이지 않게 한다.
 struct ScoreCell: View {
-    @EnvironmentObject var library: ScoreLibraryStore
+    @ObservedObject var library: ScoreLibraryStore
     let score: Score
     let onRename: () -> Void
 
@@ -124,14 +124,14 @@ struct ScoreCell: View {
                 thumbnail
             }
             .buttonStyle(.plain)
-            .contextMenu { ScoreActions(score: score, onRename: onRename) }
+            .contextMenu { ScoreActions(library: library, score: score, onRename: onRename) }
 
             HStack(spacing: 4) {
                 Text(score.title)
                     .font(.callout)
                     .lineLimit(1)
                 Menu {
-                    ScoreActions(score: score, onRename: onRename)
+                    ScoreActions(library: library, score: score, onRename: onRename)
                 } label: {
                     Image(systemName: "ellipsis.circle")
                         .foregroundStyle(.secondary)
@@ -173,7 +173,7 @@ struct ScoreCell: View {
 
 /// 컨텍스트 메뉴와 ⋯ 메뉴가 공유하는 동작 목록
 struct ScoreActions: View {
-    @EnvironmentObject var library: ScoreLibraryStore
+    @ObservedObject var library: ScoreLibraryStore
     let score: Score
     let onRename: () -> Void
 

@@ -1,22 +1,27 @@
 import SwiftUI
-import PDFKit
 import PencilKit
 import GestureCore
 
-struct ScoreViewerView: View {
+/// 페이지 소스와 무관한 뷰어 공통부: 펼침 배치, 탭/얼굴 제스처 넘김, 플래시, 페이지 표시,
+/// 필기 모드(PencilKit) + 저장, 마지막 페이지 기억.
+struct ScoreViewerShell<Content: View>: View {
     let score: Score
-    @EnvironmentObject var library: ScoreLibraryStore
+    @ObservedObject var library: ScoreLibraryStore
+    let pageCount: Int
+    /// 페이지의 정규화 좌표계 크기 (필기 좌표 기준)
+    let pageSize: (Int) -> CGSize
+    @ViewBuilder let content: (Int) -> Content
+
     @EnvironmentObject var settings: AppSettings
     @StateObject private var tracker = FaceTrackingSession()
     @Environment(\.scenePhase) private var scenePhase
-    @State private var document: PDFDocument?
-    /// 현재 펼침의 첫(왼쪽) 페이지 인덕스
+    /// 현재 펼침의 첫(왼쪽) 페이지 인덱스
     @State private var currentPageIndex = 0
     @State private var flashEdge: Edge?
     @State private var isTwoUp = false
     /// 필기 모드. 켜면 탭 넘김이 꺼지고 펜슬 캔버스가 입력을 받는다 (얼굴 제스처는 계속 동작)
     @State private var isAnnotating = false
-    /// 페이지 인덱스별 필기 (페이지 포인트 좌표계)
+    /// 페이지 인덕스별 필기 (정규화 좌표계)
     @State private var drawings: [Int: PKDrawing] = [:]
     /// 악보 메모에 필요한 도구만: 펜·마커·연필·지우개·올가미 (자·스크리블 제외)
     @State private var toolPicker = PKToolPicker(toolItems: [
@@ -28,43 +33,38 @@ struct ScoreViewerView: View {
     ])
 
     private var navigator: PageNavigator {
-        PageNavigator(pageCount: document?.pageCount ?? 0, twoUp: isTwoUp)
+        PageNavigator(pageCount: pageCount, twoUp: isTwoUp)
     }
 
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                if let document {
-                    SpreadView(
-                        document: document,
-                        indices: navigator.visibleIndices(from: currentPageIndex),
-                        twoUp: isTwoUp
-                    ) { pageIndex, scale in
-                        PencilCanvasView(
-                            drawing: drawingBinding(for: pageIndex),
-                            scale: scale,
-                            isActive: isAnnotating,
-                            toolPicker: toolPicker
-                        )
-                        .id(pageIndex)
-                    }
-                    .padding(.horizontal, 8)
+                SpreadView(indices: navigator.visibleIndices(from: currentPageIndex), twoUp: isTwoUp,
+                           pageSize: pageSize) { index in
+                    content(index)
+                } overlay: { index, scale in
+                    PencilCanvasView(
+                        drawing: drawingBinding(for: index),
+                        scale: scale,
+                        isActive: isAnnotating,
+                        toolPicker: toolPicker
+                    )
+                    .id(index)
+                }
+                .padding(.horizontal, 8)
 
-                    // 좌/우 30% 탭 영역 (필기 모드에서는 펜슬 입력을 방해하지 않도록 끔)
-                    if !isAnnotating {
-                        HStack(spacing: 0) {
-                            Color.clear
-                                .contentShape(Rectangle())
-                                .onTapGesture { turn(.previous) }
-                            Color.clear
-                                .frame(width: geo.size.width * 0.4)
-                            Color.clear
-                                .contentShape(Rectangle())
-                                .onTapGesture { turn(.next) }
-                        }
+                // 좌/우 30% 탭 영역 (필기 모드에서는 펜슬 입력을 방해하지 않도록 끔)
+                if !isAnnotating {
+                    HStack(spacing: 0) {
+                        Color.clear
+                            .contentShape(Rectangle())
+                            .onTapGesture { turn(.previous) }
+                        Color.clear
+                            .frame(width: geo.size.width * 0.4)
+                        Color.clear
+                            .contentShape(Rectangle())
+                            .onTapGesture { turn(.next) }
                     }
-                } else {
-                    ContentUnavailableView("PDF를 열 수 없습니다", systemImage: "exclamationmark.triangle")
                 }
 
                 if tracker.didFail {
@@ -113,9 +113,6 @@ struct ScoreViewerView: View {
             }
         }
         .onAppear {
-            let doc = PDFDocument(url: score.url)
-            document = doc
-            let pageCount = doc?.pageCount ?? 1
             currentPageIndex = min(library.lastPage(of: score), max(pageCount - 1, 0))
             drawings = library.annotations.load(for: score.id)
             tracker.updateSettings(settings.gesture)
@@ -156,17 +153,15 @@ struct ScoreViewerView: View {
     }
 
     private var pageLabel: String {
-        let total = document?.pageCount ?? 0
         let visible = navigator.visibleIndices(from: currentPageIndex).map { $0 + 1 }
-        guard let first = visible.first else { return "0 / \(total)" }
+        guard let first = visible.first else { return "0 / \(pageCount)" }
         if let last = visible.last, last != first {
-            return "\(first)–\(last) / \(total)"
+            return "\(first)–\(last) / \(pageCount)"
         }
-        return "\(first) / \(total)"
+        return "\(first) / \(pageCount)"
     }
 
     func turn(_ event: PageTurnEvent) {
-        guard document != nil else { return }
         let target: Int
         switch event {
         case .next: target = navigator.next(from: currentPageIndex)
