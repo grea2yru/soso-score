@@ -21,6 +21,7 @@ SoSo Score(iPad 악보 뷰어)의 기능별 개발 이력입니다. 각 항목�
 ## 다국어 (2026-09-03)
 
 - 한국어/영어 앱 언어 설정 — String Catalog 기반, 설정에서 즉시 전환 — [1dfb194](https://github.com/grea2yru/soso-score/commit/1dfb194)
+- String Catalog 추출을 컴파일러 방식(`SWIFT_EMIT_LOC_STRINGS`)으로 전환 — `Text` 외 `Button`/`Section`/`Label`/`L10n` 문구가 "참조 없음"으로 표시되던 경고 45건 해소, `L10n.string`은 `String.LocalizationValue`를 받음 — [259bc64](https://github.com/grea2yru/soso-score/commit/259bc64)
 
 ## 2B. 오디오 악보 따라가기 (2026-09-03)
 
