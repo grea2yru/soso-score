@@ -11,10 +11,18 @@ struct Score: Identifiable, Hashable {
 }
 
 /// 앱에 내장된 기본 샘플 악보. 출처와 라이선스는 Samples/LICENSE.md 참고.
-/// 목록의 첫 항목은 이전 버전(불리언 플래그 시절)부터 있던 샘플이어야 한다 (설치 기록 이관용).
+/// 이전 버전(불리언 플래그 시절)에 설치됐던 샘플 제목은 `legacyTitle`로 기억해 설치 기록을 이관한다.
 struct BundledSample {
     let url: URL
     let title: String
+
+    /// 불리언 플래그만 있던 시절에 설치됐던 유일한 샘플의 제목 (종류별)
+    static func legacyTitle(for kind: ScoreKind) -> String {
+        switch kind {
+        case .pdf: return "드뷔시 - 달빛 (Clair de Lune)"
+        case .musicXML: return "바흐 - 평균율 1권 전주곡 C장조 (BWV 846)"
+        }
+    }
 
     private static func sample(_ resource: String, _ ext: String, _ title: String) -> BundledSample? {
         Bundle.main.url(forResource: resource, withExtension: ext).map { BundledSample(url: $0, title: title) }
@@ -25,28 +33,28 @@ struct BundledSample {
         case .pdf:
             return [
                 sample("debussy-clair-de-lune", "pdf", "드뷔시 - 달빛 (Clair de Lune)"),
-                sample("chopin-nocturne-op9-no2", "pdf", "쇼팽 - 녹턴 Op.9 No.2"),
-                sample("chopin-etude-op10-no12", "pdf", "쇼팽 - 연습곡 Op.10 No.12 「혁명」"),
-                sample("chopin-etude-op10-no5", "pdf", "쇼팽 - 연습곡 Op.10 No.5 「흑건」"),
-                sample("satie-gnossienne-no1", "pdf", "사티 - 그노시엔 1번"),
-                sample("mozart-k309-1", "pdf", "모차르트 - 피아노 소나타 K.309 1악장"),
-                sample("beethoven-op2-no1-1", "pdf", "베토벤 - 피아노 소나타 1번 Op.2 No.1 1악장"),
-                sample("beethoven-op10-no2-1", "pdf", "베토벤 - 피아노 소나타 6번 Op.10 No.2 1악장"),
-                sample("schumann-kinderszenen-no1", "pdf", "슈만 - 어린이 정경 1번 「미지의 나라들」"),
-                sample("schumann-traeumerei", "pdf", "슈만 - 어린이 정경 7번 「트로이메라이」"),
+                sample("beethoven-op27-no2-moonlight", "pdf", "베토벤 - 피아노 소나타 14번 「월광」 Op.27 No.2"),
+                sample("beethoven-op13-pathetique-2", "pdf", "베토벤 - 피아노 소나타 8번 「비창」 2악장"),
+                sample("chopin-fantaisie-impromptu-op66", "pdf", "쇼팽 - 환상 즉흥곡 Op.66"),
+                sample("chopin-prelude-op28-no15-raindrop", "pdf", "쇼팽 - 전주곡 Op.28 No.15 「빗방울」"),
+                sample("mozart-k331-3-alla-turca", "pdf", "모차르트 - 터키 행진곡 (K.331 3악장)"),
+                sample("schubert-impromptu-op90-no3", "pdf", "슈베르트 - 즉흥곡 Op.90 No.3"),
+                sample("rachmaninoff-prelude-op3-no2", "pdf", "라흐마니노프 - 전주곡 Op.3 No.2"),
+                sample("joplin-the-entertainer", "pdf", "조플린 - 엔터테이너"),
+                sample("bach-bwv971-italian-concerto", "pdf", "바흐 - 이탈리아 협주곡 (BWV 971)"),
             ].compactMap { $0 }
         case .musicXML:
             return [
-                sample("bach-bwv846", "mxl", "바흐 - 평균율 1권 전주곡 C장조 (BWV 846)"),
-                sample("mozart-k545-1", "mxl", "모차르트 - 피아노 소나타 K.545 1악장 (제시부)"),
-                sample("joplin-maple-leaf-rag", "mxl", "조플린 - 메이플 리프 래그"),
-                sample("cschumann-polonaise-op1-no1", "mxl", "클라라 슈만 - 폴로네즈 Op.1 No.1"),
-                sample("cschumann-polonaise-op1-no2", "mxl", "클라라 슈만 - 폴로네즈 Op.1 No.2"),
-                sample("cschumann-polonaise-op1-no3", "mxl", "클라라 슈만 - 폴로네즈 Op.1 No.3"),
-                sample("bach-bwv227-1", "mxl", "바흐 - 코랄 「예수, 나의 기쁨」 (BWV 227-1)"),
-                sample("bach-bwv244-54", "mxl", "바흐 - 코랄 「오 피와 상처로 가득한 머리」 (BWV 244-54)"),
-                sample("bach-bwv269", "mxl", "바흐 - 코랄 「내 마음의 깊은 곳에서」 (BWV 269)"),
+                sample("debussy-clair-de-lune", "mxl", "드뷔시 - 달빛 (Clair de Lune)"),
+                sample("schubert-erlkoenig", "mxl", "슈베르트 - 마왕 (Erlkönig)"),
+                sample("schubert-gretchen-am-spinnrade", "mxl", "슈베르트 - 물레 감는 그레트헨"),
                 sample("schubert-lindenbaum", "xml", "슈베르트 - 보리수 (Der Lindenbaum)"),
+                sample("beethoven-op18-no1-1", "mxl", "베토벤 - 현악 4중주 1번 Op.18 No.1 1악장"),
+                sample("mozart-k458-1", "mxl", "모차르트 - 현악 4중주 17번 「사냥」 K.458 1악장"),
+                sample("haydn-op74-no1-1", "mxl", "하이든 - 현악 4중주 Op.74 No.1 1악장"),
+                sample("dvorak-op96-american", "mxl", "드보르자크 - 현악 4중주 12번 「아메리카」 Op.96"),
+                sample("borodin-quartet-no2", "mxl", "보로딘 - 현악 4중주 2번"),
+                sample("weber-clarinet-concertino", "mxl", "베버 - 클라리넷 콘체르티노 Op.26"),
             ].compactMap { $0 }
         }
     }
@@ -149,9 +157,9 @@ final class ScoreLibraryStore: ObservableObject {
     /// 나중에 추가된 샘플은 기존 사용자에게도 설치된다.
     func installSamplesIfNeeded(_ samples: [BundledSample]) {
         var installed = Set(defaults.stringArray(forKey: kind.installedSamplesKey) ?? [])
-        // 이전 버전(불리언 플래그) 호환: 목록이 없고 플래그만 있으면 첫 샘플은 이미 설치된 것으로 본다
-        if installed.isEmpty, defaults.bool(forKey: kind.samplesInstalledKey), let first = samples.first {
-            installed.insert(first.title)
+        // 이전 버전(불리언 플래그) 호환: 목록이 없고 플래그만 있으면 그 시절의 샘플은 이미 설치된 것으로 본다
+        if installed.isEmpty, defaults.bool(forKey: kind.samplesInstalledKey) {
+            installed.insert(BundledSample.legacyTitle(for: kind))
         }
         var changed = false
         for sample in samples where !installed.contains(sample.title) {

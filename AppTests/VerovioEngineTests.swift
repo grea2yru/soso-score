@@ -4,7 +4,7 @@ import XCTest
 @MainActor
 final class VerovioEngineTests: XCTestCase {
     func testLoadsSampleRendersPagesAndTimemap() async throws {
-        let url = try XCTUnwrap(Bundle.main.url(forResource: "bach-bwv846", withExtension: "mxl"))
+        let url = try XCTUnwrap(Bundle.main.url(forResource: "debussy-clair-de-lune", withExtension: "mxl"))
         let engine = VerovioEngine()
 
         let pageCount = try await engine.load(fileURL: url)

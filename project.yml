@@ -18,7 +18,7 @@ targets:
       - App
       - path: Samples
         buildPhase: resources
-        excludes: ["LICENSE.md"]
+        excludes: ["LICENSE.md", "tools"]
       - path: Vendor/verovio
         type: folder
         buildPhase: resources

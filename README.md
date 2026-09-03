@@ -14,7 +14,7 @@ PDF와 MusicXML 악보를 보관함에 모아 두고, 고개 돌리기·윙크 �
 - PDF · MusicXML(`.musicxml`, `.xml`, `.mxl`) 가져오기, 이름 변경, 삭제, 즐겨찾기, 제목 검색
 - 파일 앱·다른 앱에서 "SoSo Score로 열기" 지원(문서 타입 등록)
 - 마지막으로 본 페이지 기억
-- 최초 실행 시 퍼블릭 도메인 샘플 악보 20곡 자동 설치 (PDF 10곡, MusicXML 10곡 — 출처는 [Samples/LICENSE.md](Samples/LICENSE.md))
+- 최초 실행 시 퍼블릭 도메인 샘플 악보 20곡 자동 설치 (PDF 10곡, MusicXML 10곡, 모두 4페이지 이상 — 출처는 [Samples/LICENSE.md](Samples/LICENSE.md))
 
 ### 악보 보기
 - 탭으로 넘기기, 책처럼 두 쪽을 펼쳐 보는 펼침 모드
@@ -94,4 +94,4 @@ swiftc -O -o /tmp/drawicon Design/DrawAppIcon.swift && /tmp/drawicon App/Assets.
 ## 라이선스 고지
 
 - Verovio 6.3.0 — LGPL-3.0-or-later, 무수정 번들 ([Vendor/LICENSE.md](Vendor/LICENSE.md))
-- 샘플 악보 — Mutopia Project(Public Domain / CC BY / CC BY-SA), music21 corpus ([Samples/LICENSE.md](Samples/LICENSE.md))
+- 샘플 악보 — Mutopia Project(Public Domain / CC BY-SA), music21 corpus, OpenScore(CC0) ([Samples/LICENSE.md](Samples/LICENSE.md))

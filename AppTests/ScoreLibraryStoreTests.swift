@@ -130,7 +130,7 @@ final class ScoreLibraryStoreTests: XCTestCase {
     func testLegacyBooleanFlagTreatsFirstSampleAsInstalled() throws {
         defaults.set(true, forKey: ScoreKind.pdf.samplesInstalledKey)   // 구버전 상태
         let store = makeStore()
-        let a = BundledSample(url: try makePDF(named: "a"), title: "첫 샘플")
+        let a = BundledSample(url: try makePDF(named: "a"), title: BundledSample.legacyTitle(for: .pdf))
         let b = BundledSample(url: try makePDF(named: "b"), title: "나중 샘플")
         store.installSamplesIfNeeded([a, b])
         XCTAssertEqual(store.scores.map(\.title), ["나중 샘플"])
