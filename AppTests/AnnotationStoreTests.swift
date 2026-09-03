@@ -1,6 +1,6 @@
 import XCTest
 import PencilKit
-@testable import ScoreForYou
+@testable import SoSoScore
 
 final class AnnotationStoreTests: XCTestCase {
     var dir: URL!

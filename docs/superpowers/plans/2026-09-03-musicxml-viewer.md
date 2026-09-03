@@ -161,7 +161,7 @@ window.vrv = {
 
 ```swift
 import XCTest
-@testable import ScoreForYou
+@testable import SoSoScore
 
 @MainActor
 final class VerovioEngineTests: XCTestCase {
@@ -197,7 +197,7 @@ final class VerovioEngineTests: XCTestCase {
 
 - [ ] **Step 5: 테스트 실행 — 실패 확인**
 
-Run: `xcodegen generate -q && xcodebuild test -project ScoreForYou.xcodeproj -scheme ScoreForYou -destination 'platform=iOS Simulator,name=iPad Pro 13-inch (M5)' -derivedDataPath build 2>&1 | grep -E "TEST |error:" | sort -u`
+Run: `xcodegen generate -q && xcodebuild test -project SoSoScore.xcodeproj -scheme SoSoScore -destination 'platform=iOS Simulator,name=iPad Pro 13-inch (M5)' -derivedDataPath build 2>&1 | grep -E "TEST |error:" | sort -u`
 Expected: `cannot find 'VerovioEngine' in scope`
 
 - [ ] **Step 6: 구현**
@@ -337,7 +337,7 @@ git commit -m "feat: Verovio 엔진 번들 및 VerovioEngine(MusicXML 조판·�
 
 ```swift
 import XCTest
-@testable import ScoreForYou
+@testable import SoSoScore
 
 final class ScoreKindTests: XCTestCase {
     var dir: URL!

@@ -1,5 +1,5 @@
 import XCTest
-@testable import ScoreForYou
+@testable import SoSoScore
 
 @MainActor
 final class VerovioEngineTests: XCTestCase {

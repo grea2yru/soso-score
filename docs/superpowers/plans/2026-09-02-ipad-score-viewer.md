@@ -18,7 +18,7 @@
 - 제스처 판정 로직은 `Packages/GestureCore`에 두고 ARKit/UIKit 타입 의존 금지
 - 제스처 기본값(스펙 수치): 고개 임계값 20°, 유지 0.3초, 재무장 5°; 윙크 감김 >0.8, 열림 <0.3, 유지 0.2초; 쿨다운 1.5초; 방향은 오른쪽/오른눈 = 다음
 - ARKit blendShape의 left/right는 **사용자 기준**임 (거울 반전 아님)
-- `ScoreForYou.xcodeproj`와 `App/Info.plist`는 XcodeGen 생성물이므로 커밋하지 않음
+- `SoSoScore.xcodeproj`와 `App/Info.plist`는 XcodeGen 생성물이므로 커밋하지 않음
 - 커밋 메시지 끝에 `Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>` 추가
 
 ## 파일 구조
@@ -700,7 +700,7 @@ git commit -m "feat: GestureEngine — 모드 필터, 공유 쿨다운, 방향 �
 
 **Interfaces:**
 - Consumes: `GestureCore` 패키지 (Task 1–4)
-- Produces: `xcodegen generate`로 생성되는 `ScoreForYou.xcodeproj`, 스킴 `ScoreForYou` (앱 + 단위 테스트), 카메라 권한 문구와 PDF 문서 타입이 선언된 Info.plist
+- Produces: `xcodegen generate`로 생성되는 `SoSoScore.xcodeproj`, 스킴 `SoSoScore` (앱 + 단위 테스트), 카메라 권한 문구와 PDF 문서 타입이 선언된 Info.plist
 
 - [ ] **Step 1: XcodeGen 설치 확인**
 
@@ -717,14 +717,14 @@ xcuserdata/
 DerivedData/
 .build/
 build/
-ScoreForYou.xcodeproj/
+SoSoScore.xcodeproj/
 App/Info.plist
 ```
 
 `project.yml`:
 
 ```yaml
-name: ScoreForYou
+name: SoSoScore
 options:
   bundleIdPrefix: com.yru
   deploymentTarget:
@@ -734,7 +734,7 @@ packages:
   GestureCore:
     path: Packages/GestureCore
 targets:
-  ScoreForYou:
+  SoSoScore:
     type: application
     platform: iOS
     sources: [App]
@@ -761,20 +761,20 @@ targets:
         SWIFT_VERSION: "5.9"
         # 실기기 배포 시 Xcode에서 팀을 지정하거나 아래 주석을 해제해 팀 ID를 기입
         # DEVELOPMENT_TEAM: XXXXXXXXXX
-  ScoreForYouTests:
+  SoSoScoreTests:
     type: bundle.unit-test
     platform: iOS
     sources: [AppTests]
     dependencies:
-      - target: ScoreForYou
+      - target: SoSoScore
 schemes:
-  ScoreForYou:
+  SoSoScore:
     build:
       targets:
-        ScoreForYou: all
-        ScoreForYouTests: [test]
+        SoSoScore: all
+        SoSoScoreTests: [test]
     test:
-      targets: [ScoreForYouTests]
+      targets: [SoSoScoreTests]
 ```
 
 `App/ScoreApp.swift` (이 시점에는 최소 화면 — Task 7에서 LibraryView로 교체):
@@ -810,7 +810,7 @@ Run:
 
 ```bash
 xcodegen generate
-xcodebuild -project ScoreForYou.xcodeproj -scheme ScoreForYou \
+xcodebuild -project SoSoScore.xcodeproj -scheme SoSoScore \
   -destination 'generic/platform=iOS Simulator' build
 ```
 
@@ -822,7 +822,7 @@ Expected: `BUILD SUCCEEDED`
 
 ```bash
 xcrun simctl list devices available | grep iPad
-xcodebuild test -project ScoreForYou.xcodeproj -scheme ScoreForYou \
+xcodebuild test -project SoSoScore.xcodeproj -scheme SoSoScore \
   -destination 'platform=iOS Simulator,name=<위에서 확인한 iPad 이름>'
 ```
 
@@ -862,7 +862,7 @@ git commit -m "feat: XcodeGen 기반 앱 프로젝트 스캐폴딩"
 ```swift
 import XCTest
 import UIKit
-@testable import ScoreForYou
+@testable import SoSoScore
 
 @MainActor
 final class ScoreLibraryStoreTests: XCTestCase {
@@ -964,7 +964,7 @@ Run:
 
 ```bash
 xcodegen generate
-xcodebuild test -project ScoreForYou.xcodeproj -scheme ScoreForYou \
+xcodebuild test -project SoSoScore.xcodeproj -scheme SoSoScore \
   -destination 'platform=iOS Simulator,name=<Task 5에서 확인한 iPad 이름>'
 ```
 
@@ -1073,7 +1073,7 @@ final class ScoreLibraryStore: ObservableObject {
 Run:
 
 ```bash
-xcodebuild test -project ScoreForYou.xcodeproj -scheme ScoreForYou \
+xcodebuild test -project SoSoScore.xcodeproj -scheme SoSoScore \
   -destination 'platform=iOS Simulator,name=<iPad 이름>'
 ```
 
@@ -1291,7 +1291,7 @@ Run:
 
 ```bash
 xcodegen generate
-xcodebuild test -project ScoreForYou.xcodeproj -scheme ScoreForYou \
+xcodebuild test -project SoSoScore.xcodeproj -scheme SoSoScore \
   -destination 'platform=iOS Simulator,name=<iPad 이름>'
 ```
 
@@ -1302,11 +1302,11 @@ Expected: `TEST SUCCEEDED`
 ```bash
 xcrun simctl boot "<iPad 이름>" 2>/dev/null || true
 open -a Simulator
-xcodebuild -project ScoreForYou.xcodeproj -scheme ScoreForYou \
+xcodebuild -project SoSoScore.xcodeproj -scheme SoSoScore \
   -destination 'platform=iOS Simulator,name=<iPad 이름>' \
   -derivedDataPath build build
-xcrun simctl install booted build/Build/Products/Debug-iphonesimulator/ScoreForYou.app
-xcrun simctl launch booted com.yru.ScoreForYou
+xcrun simctl install booted build/Build/Products/Debug-iphonesimulator/SoSoScore.app
+xcrun simctl launch booted com.yru.SoSoScore
 ```
 
 확인 항목:
@@ -1519,7 +1519,7 @@ Run:
 
 ```bash
 xcodegen generate
-xcodebuild test -project ScoreForYou.xcodeproj -scheme ScoreForYou \
+xcodebuild test -project SoSoScore.xcodeproj -scheme SoSoScore \
   -destination 'platform=iOS Simulator,name=<iPad 이름>'
 ```
 
@@ -1641,7 +1641,7 @@ Run:
 
 ```bash
 xcodegen generate
-xcodebuild test -project ScoreForYou.xcodeproj -scheme ScoreForYou \
+xcodebuild test -project SoSoScore.xcodeproj -scheme SoSoScore \
   -destination 'platform=iOS Simulator,name=<iPad 이름>'
 ```
 
@@ -1650,7 +1650,7 @@ Expected: `TEST SUCCEEDED`
 - [ ] **Step 3: 시뮬레이터에서 수동 확인**
 
 1. 설정 화면 진입, 각 슬라이더·피커 조작
-2. 앱 종료(`xcrun simctl terminate booted com.yru.ScoreForYou`) 후 재실행 → 설정값 유지 확인
+2. 앱 종료(`xcrun simctl terminate booted com.yru.SoSoScore`) 후 재실행 → 설정값 유지 확인
 3. "기본값으로 되돌리기" 동작 확인
 
 - [ ] **Step 4: Commit**
@@ -1894,7 +1894,7 @@ Run:
 ```bash
 xcodegen generate
 cd Packages/GestureCore && swift test && cd ../..
-xcodebuild test -project ScoreForYou.xcodeproj -scheme ScoreForYou \
+xcodebuild test -project SoSoScore.xcodeproj -scheme SoSoScore \
   -destination 'platform=iOS Simulator,name=<iPad 이름>'
 ```
 
@@ -1908,7 +1908,7 @@ Expected: GestureCore 22 tests + 앱 8 tests 모두 통과, `TEST SUCCEEDED`
 
 - [ ] **Step 6: 실기기 검증 (사용자 협조 필요)**
 
-Xcode에서 `ScoreForYou.xcodeproj`를 열어 Signing & Capabilities에서 팀 선택 후 iPad에 실행. (이후 `project.yml`의 `DEVELOPMENT_TEAM` 주석을 해제하고 팀 ID를 기입하면 재생성 후에도 유지됨)
+Xcode에서 `SoSoScore.xcodeproj`를 열어 Signing & Capabilities에서 팀 선택 후 iPad에 실행. (이후 `project.yml`의 `DEVELOPMENT_TEAM` 주석을 해제하고 팀 ID를 기입하면 재생성 후에도 유지됨)
 
 검증 절차:
 1. 최초 실행 시 카메라 권한 요청 → 허용

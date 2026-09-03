@@ -1,5 +1,5 @@
 import XCTest
-@testable import ScoreForYou
+@testable import SoSoScore
 
 final class LocalizationTests: XCTestCase {
     override func tearDown() {

@@ -1,5 +1,5 @@
 import XCTest
-@testable import ScoreForYou
+@testable import SoSoScore
 
 final class PageNavigatorTests: XCTestCase {
     // MARK: 세로(한 페이지)

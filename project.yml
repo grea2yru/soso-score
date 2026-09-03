@@ -1,4 +1,4 @@
-name: ScoreForYou
+name: SoSoScore
 options:
   bundleIdPrefix: com.yru
   developmentLanguage: ko
@@ -11,7 +11,7 @@ packages:
   ScoreFollowCore:
     path: Packages/ScoreFollowCore
 targets:
-  ScoreForYou:
+  SoSoScore:
     type: application
     platform: iOS
     sources:
@@ -28,7 +28,7 @@ targets:
     info:
       path: App/Info.plist
       properties:
-        CFBundleDisplayName: SOSO Score
+        CFBundleDisplayName: SoSo Score
         NSCameraUsageDescription: 얼굴 제스처(고개 돌리기·윙크)로 악보 페이지를 넘기기 위해 전면 카메라를 사용합니다.
         NSMicrophoneUsageDescription: 연주 소리를 듣고 악보의 현재 위치를 따라가기 위해 마이크를 사용합니다.
         UILaunchScreen: {}
@@ -64,20 +64,20 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         # 실기기 배포 시 Xcode에서 팀을 지정하거나 아래 주석을 해제해 팀 ID를 기입
         # DEVELOPMENT_TEAM: XXXXXXXXXX
-  ScoreForYouTests:
+  SoSoScoreTests:
     type: bundle.unit-test
     platform: iOS
     sources: [AppTests]
     dependencies:
-      - target: ScoreForYou
+      - target: SoSoScore
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
 schemes:
-  ScoreForYou:
+  SoSoScore:
     build:
       targets:
-        ScoreForYou: all
-        ScoreForYouTests: [test]
+        SoSoScore: all
+        SoSoScoreTests: [test]
     test:
-      targets: [ScoreForYouTests]
+      targets: [SoSoScoreTests]

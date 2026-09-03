@@ -1,7 +1,7 @@
 import XCTest
 import UIKit
 import PencilKit
-@testable import ScoreForYou
+@testable import SoSoScore
 
 @MainActor
 final class ScoreLibraryStoreTests: XCTestCase {
