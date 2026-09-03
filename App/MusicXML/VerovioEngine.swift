@@ -1,5 +1,6 @@
 import Foundation
 import WebKit
+import ScoreFollowCore
 
 enum VerovioError: LocalizedError {
     case notReady
@@ -80,6 +81,36 @@ final class VerovioEngine {
             throw VerovioError.scriptFailed("타임맵 없음")
         }
         return Data(json.utf8)
+    }
+
+    /// 페이지 안의 시스템(줄) 구성: 음표/마디 id → 시스템 순번
+    struct PageSystemMap: Decodable {
+        let count: Int
+        let notes: [String: Int]
+        let measures: [String: Int]
+    }
+
+    func timemapEntries() async throws -> [TimemapEntry] {
+        try JSONDecoder().decode([TimemapEntry].self, from: try await timemap())
+    }
+
+    /// 음표 id → MIDI 피치 (한 번의 JS 호출)
+    func pitches(for ids: [String]) async throws -> [String: Int] {
+        let idsJSON = String(data: try JSONSerialization.data(withJSONObject: ids), encoding: .utf8) ?? "[]"
+        let escaped = idsJSON
+            .replacingOccurrences(of: "\\", with: "\\\\")
+            .replacingOccurrences(of: "'", with: "\\'")
+        guard let json = try await evaluate("window.vrv.pitches('\(escaped)')") as? String else {
+            throw VerovioError.scriptFailed("피치 조회 실패")
+        }
+        return try JSONDecoder().decode([String: Int].self, from: Data(json.utf8))
+    }
+
+    func systemMap(page index: Int) async throws -> PageSystemMap {
+        guard let json = try await evaluate("window.vrv.systemMap(\(index + 1))") as? String else {
+            throw VerovioError.scriptFailed("시스템 맵 실패")
+        }
+        return try JSONDecoder().decode(PageSystemMap.self, from: Data(json.utf8))
     }
 
     func pageWithElement(_ id: String) async throws -> Int {

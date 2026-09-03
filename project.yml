@@ -7,6 +7,8 @@ options:
 packages:
   GestureCore:
     path: Packages/GestureCore
+  ScoreFollowCore:
+    path: Packages/ScoreFollowCore
 targets:
   ScoreForYou:
     type: application
@@ -21,11 +23,13 @@ targets:
         buildPhase: resources
     dependencies:
       - package: GestureCore
+      - package: ScoreFollowCore
     info:
       path: App/Info.plist
       properties:
         CFBundleDisplayName: 악보뷰어
         NSCameraUsageDescription: 얼굴 제스처(고개 돌리기·윙크)로 악보 페이지를 넘기기 위해 전면 카메라를 사용합니다.
+        NSMicrophoneUsageDescription: 연주 소리를 듣고 악보의 현재 위치를 따라가기 위해 마이크를 사용합니다.
         UILaunchScreen: {}
         UISupportedInterfaceOrientations~ipad:
           - UIInterfaceOrientationPortrait

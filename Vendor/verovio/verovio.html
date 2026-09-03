@@ -31,7 +31,25 @@ window.vrv = {
   pageSVG: (n) => tk.renderToSVG(n, false),
   timemap: () => JSON.stringify(tk.renderToTimemap({ includeMeasures: true, includeRests: false })),
   midi: (id) => JSON.stringify(tk.getMIDIValuesForElement(id)),
-  pageWithElement: (id) => tk.getPageWithElement(id)
+  pageWithElement: (id) => tk.getPageWithElement(id),
+  pitches: (idsJson) => {
+    const out = {};
+    JSON.parse(idsJson).forEach(id => {
+      const v = tk.getMIDIValuesForElement(id);
+      if (v && v.pitch > 0) out[id] = v.pitch;
+    });
+    return JSON.stringify(out);
+  },
+  systemMap: (n) => {
+    const doc = new DOMParser().parseFromString(tk.renderToSVG(n, false), "image/svg+xml");
+    const systems = Array.from(doc.querySelectorAll("g.system"));
+    const notes = {}, measures = {};
+    systems.forEach((sys, i) => {
+      sys.querySelectorAll("g.measure").forEach(m => { measures[m.id] = i; });
+      sys.querySelectorAll("g.note").forEach(nt => { notes[nt.id] = i; });
+    });
+    return JSON.stringify({ count: systems.length, notes, measures });
+  }
 };
 </script>
 </body></html>

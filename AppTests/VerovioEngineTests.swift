@@ -17,6 +17,17 @@ final class VerovioEngineTests: XCTestCase {
         let map = try await engine.timemap()
         let entries = try XCTUnwrap(JSONSerialization.jsonObject(with: map) as? [[String: Any]])
         XCTAssertTrue(entries.contains { (($0["on"] as? [String])?.isEmpty == false) })
+
+        // 2B: 피치·시스템 맵
+        let typed = try await engine.timemapEntries()
+        let ids = Array(typed.flatMap { $0.on ?? [] }.prefix(20))
+        let pitches = try await engine.pitches(for: ids)
+        XCTAssertEqual(pitches.count, ids.count)
+        XCTAssertTrue(pitches.values.allSatisfy { (21...108).contains($0) })
+        let systems = try await engine.systemMap(page: 0)
+        XCTAssertGreaterThan(systems.count, 0)
+        XCTAssertFalse(systems.notes.isEmpty)
+        XCTAssertFalse(systems.measures.isEmpty)
     }
 
     func testLoadInvalidFileThrows() async throws {
