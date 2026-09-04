@@ -23,8 +23,12 @@ final class SVGPageController: ObservableObject {
 
 /// Verovio가 만든 SVG 페이지 하나를 표시하는 가벼운 웹뷰.
 /// 상호작용은 받지 않는다(탭 영역·필기 캔버스가 위에서 처리).
+///
+/// 페이지를 넘겨도 슬롯의 웹뷰는 그대로 두고 내용만 갈아 끼운다 — WKWebView를 만들고 버릴 때마다
+/// WebKit이 웹 콘텐츠 프로세스를 종료하며 "Failed to terminate process … Client not entitled" 로그를 남긴다.
+/// `svg`가 nil이면(아직 조판 전) 이전 내용을 유지한다. 부모가 그 위에 로딩 표시를 덮는다.
 struct SVGPageView: UIViewRepresentable {
-    let svg: String
+    let svg: String?
     /// 하이라이트할 SVG 요소 id 목록 (따라가기)
     var highlightIDs: [String] = []
     var controller: SVGPageController? = nil
@@ -43,6 +47,7 @@ struct SVGPageView: UIViewRepresentable {
 
     func updateUIView(_ webView: WKWebView, context: Context) {
         controller?.webView = webView
+        guard let svg else { return }
         if context.coordinator.loadedSVG != svg {
             context.coordinator.loadedSVG = svg
             context.coordinator.pendingHighlight = highlightIDs

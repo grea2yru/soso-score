@@ -148,7 +148,7 @@ struct MusicXMLScoreViewer: View {
 }
 
 /// 페이지 SVG를 필요할 때 문서에서 받아와 표시하고, 따라가기 중에는 탭 위치를 정규화해 전달한다.
-private struct SVGPage: View {
+struct SVGPage: View {
     let index: Int
     @Binding var svgs: [Int: String]
     let loadSVG: (Int) async -> String?
@@ -159,9 +159,9 @@ private struct SVGPage: View {
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                if let svg = svgs[index] {
-                    SVGPageView(svg: svg, highlightIDs: highlightIDs, controller: controller)
-                } else {
+                // 웹뷰는 슬롯에 항상 남겨 두고(프로세스 재생성 방지), SVG가 없는 동안만 로딩 표시를 덮는다
+                SVGPageView(svg: svgs[index], highlightIDs: highlightIDs, controller: controller)
+                if svgs[index] == nil {
                     Color.white.overlay(ProgressView())
                 }
                 if let onTapNormalized {
