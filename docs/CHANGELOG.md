@@ -4,6 +4,7 @@ SoSo Score(iPad 악보 뷰어)의 기능별 개발 이력입니다. 각 항목�
 
 ## 조판 속도 (2026-09-03)
 
+- 페이지를 넘길 때 슬롯의 웹뷰를 유지하고 내용만 갈아 끼움 — 조판 전 페이지로 넘기면 WKWebView가 파괴·재생성되어 웹 프로세스가 매번 죽고 다시 뜨던 문제(콘솔의 "Failed to terminate process" 반복) 해소, 회귀 테스트 추가 — [20d05f6](https://github.com/grea2yru/soso-score/commit/20d05f6)
 - 음표 피치 조회를 MEI 한 번 파싱으로 교체 — 음표마다 `getMIDIValuesForElement`를 부르던 제곱 시간 병목 제거(4중주 36~60초 → 수십 ms). `Vendor/verovio/pitch-index.js`, Node 검증 `Vendor/tests/pitch-index.test.js` — [ddb3592](https://github.com/grea2yru/soso-score/commit/ddb3592)
 - 페이지 SVG는 문서당 한 번만 렌더 — 시스템 맵이 표시용과 같은 문자열을 재사용 — [ddb3592](https://github.com/grea2yru/soso-score/commit/ddb3592)
 - 보이는 펼침부터 조판하고 페이지 사이에 표시 요청이 끼어들 수 있게 양보 (`TypesetDocument.buildFollowIndex`) — [ddb3592](https://github.com/grea2yru/soso-score/commit/ddb3592)
