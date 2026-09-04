@@ -19,6 +19,7 @@ PDF와 MusicXML 악보를 보관함에 모아 두고, 고개 돌리기·윙크 �
 ### 악보 보기
 - 탭으로 넘기기, 책처럼 두 쪽을 펼쳐 보는 펼침 모드
 - MusicXML은 [Verovio](https://www.verovio.org) 엔진으로 기기에서 직접 조판해 SVG로 표시
+- 조판 결과는 디스크에 캐시되어 두 번째부터는 즉시 열리고, 가져오기·샘플 설치 직후 백그라운드에서 미리 조판
 - 애플펜슬 필기: 페이지별로 저장되며 도구 팔레트 제공
 
 ### 손대지 않고 넘기기
@@ -31,7 +32,7 @@ PDF와 MusicXML 악보를 보관함에 모아 두고, 고개 돌리기·윙크 �
 App/                 iPad 앱 (SwiftUI)
   Models/            보관함·설정·필기 저장소·페이지 내비게이터
   Views/             보관함, PDF 뷰어, 펼침 레이아웃, 필기 캔버스, 설정
-  MusicXML/          Verovio 엔진 브리지, SVG 페이지 뷰, MusicXML 뷰어
+  MusicXML/          Verovio 엔진 브리지, SVG 페이지 뷰, MusicXML 뷰어, 조판 캐시·백그라운드 미리 조판
   Tracking/          ARKit 얼굴 추적 세션
   Following/         마이크 입력, 악보 따라가기, 툴바 컨트롤
   Localizable.xcstrings  한국어/영어 String Catalog
